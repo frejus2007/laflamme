@@ -4,10 +4,8 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 // Initialize Client
 // Make sure to load the CDN in HTML first: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-let supabaseClient;
-
 try {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     console.log("Supabase Client Initialized");
 } catch (e) {
     console.warn("Supabase library not loaded yet or initialization failed", e);
