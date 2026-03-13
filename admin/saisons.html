@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion Saisons - Admin</title>
+    <script>
+        if (!localStorage.getItem('flamme_admin')) {
+            window.location.href = 'login.html';
+        }
+    </script>
     <link rel="stylesheet" href="../css/style.css">
     <style>
         body {
@@ -75,6 +80,18 @@
         .admin-header h1 {
             font-size: 2rem;
             color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .admin-card {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid #333;
+            border-top: 3px solid var(--flame-orange);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
         }
     </style>
 </head>
@@ -88,6 +105,10 @@
                 <li><a href="joueurs.html">Gestion Joueurs</a></li>
                 <li><a href="saisons.html" class="active">Gestion Saisons</a></li>
             </ul>
+            <div style="margin-top: auto; padding: 20px;">
+                <button onclick="logoutAdmin()" class="btn btn-outline"
+                    style="width: 100%; border-color:#ff3333; color:#ff3333; background: transparent;">Déconnexion</button>
+            </div>
         </aside>
 
         <main class="admin-content">
@@ -95,8 +116,8 @@
                 <h1>Gestion des Saisons</h1>
             </div>
 
-            <div class="card" style="max-width: 600px;">
-                <h3 style="color: var(--flame-orange); margin-bottom: 20px;">Saison Actuelle</h3>
+            <div class="admin-card" style="max-width: 600px;">
+                <h3 style="color: var(--flame-yellow); margin-bottom: 20px; font-size: 1.5rem; border-bottom: 1px solid #333; padding-bottom: 10px;">Saison Actuelle</h3>
                 <div id="current-season-container"
                     style="background: rgba(0,0,0,0.5); padding: 20px; border-radius: 8px; border: 1px solid #333; margin-bottom: 30px;">
                     <p style="font-size: 1.2rem; margin-bottom: 10px;"><strong id="current-season-name">Chargement...</strong></p>
@@ -104,11 +125,11 @@
                     <p style="color: #aaa; margin-bottom: 20px;" id="current-season-end">Date de fin: ...</p>
 
                     <button id="btn-reset-season" class="btn btn-outline"
-                        style="border-color:#ff3333; color:#ff3333; width:100%;">Réinitialiser Points (Fin de
+                        style="border-color:#ff3333; color:#ff3333; width:100%; transition: 0.3s; background: rgba(255,51,51,0.1);">Réinitialiser Points (Fin de
                         Saison)</button>
                 </div>
 
-                <h3 style="color: var(--flame-orange); margin-bottom: 20px;">Créer Nouvelle Saison</h3>
+                <h3 style="color: var(--flame-yellow); margin-bottom: 20px; font-size: 1.5rem; border-bottom: 1px solid #333; padding-bottom: 10px;">Créer Nouvelle Saison</h3>
                 <form id="create-season-form">
                     <div class="form-group">
                         <label>Nom de la Saison</label>
@@ -130,6 +151,12 @@
             </div>
         </main>
     </div>
+    <script>
+        function logoutAdmin() {
+            localStorage.removeItem('flamme_admin');
+            window.location.href = 'login.html';
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/main.js"></script>
     <script>

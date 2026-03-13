@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion Joueurs - Admin</title>
+    <script>
+        if (!localStorage.getItem('flamme_admin')) {
+            window.location.href = 'login.html';
+        }
+    </script>
     <link rel="stylesheet" href="../css/style.css">
     <style>
         body {
@@ -75,36 +80,94 @@
         .admin-header h1 {
             font-size: 2rem;
             color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            font-family: 'Orbitron', sans-serif;
         }
 
-        .action-flex {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-action {
-            padding: 5px 10px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            border: none;
-            border-radius: 4px;
-            color: white;
-        }
-
-        .btn-edit {
-            background: #33aaff;
-        }
-
-        .btn-delete {
-            background: #ff3333;
-        }
-
-        .btn-penalize {
-            background: #ccaa00;
+        .admin-card {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid #333;
+            border-top: 3px solid var(--flame-orange);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
         }
 
         .admin-table th {
             background: #222;
+            color: var(--flame-yellow);
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            padding: 15px;
+            border-bottom: 2px solid #333;
+        }
+
+        .admin-table td {
+            padding: 15px;
+            vertical-align: middle;
+            border-bottom: 1px solid #222;
+        }
+
+        .admin-table tbody tr:hover {
+            background: rgba(255, 115, 0, 0.05);
+        }
+
+        .action-flex {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-start;
+        }
+
+        .btn-action {
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .btn-penalize {
+            background: rgba(204, 170, 0, 0.2);
+            color: #ffcc00;
+            border-color: #ffcc00;
+        }
+        .btn-penalize:hover {
+            background: #ffcc00;
+            color: #000;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+
+        .btn-delete {
+            background: rgba(255, 51, 51, 0.2);
+            color: #ff3333;
+            border-color: #ff3333;
+        }
+        .btn-delete:hover {
+            background: #ff3333;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+        }
+
+        .player-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #333;
+            border: 1px solid var(--flame-orange);
+            object-fit: cover;
+        }
+
+        .player-info-cell {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
     </style>
 </head>
@@ -119,25 +182,28 @@
                 <li><a href="joueurs.html" class="active">Gestion Joueurs</a></li>
                 <li><a href="saisons.html">Gestion Saisons</a></li>
             </ul>
+            <div style="margin-top: auto; padding: 20px;">
+                <button onclick="logoutAdmin()" class="btn btn-outline"
+                    style="width: 100%; border-color:#ff3333; color:#ff3333; background: transparent;">Déconnexion</button>
+            </div>
         </aside>
 
         <!-- Main Content -->
         <main class="admin-content">
             <div class="admin-header">
                 <h1>Gestion des Joueurs</h1>
-                <button class="btn btn-outline">+ NOUVEAU JOUEUR</button>
             </div>
 
-            <div class="card" style="padding: 20px;">
+            <div class="admin-card">
                 <div class="table-responsive">
                     <table class="gaming-table admin-table" style="font-size: 0.9rem;">
                         <thead>
                             <tr>
-                                <th>Pseudo</th>
+                                <th>Joueur / Pseudo</th>
                                 <th>WhatsApp</th>
                                 <th>Spécialité</th>
                                 <th>Points</th>
-                                <th>Actions</th>
+                                <th>Actions Admin</th>
                             </tr>
                         </thead>
                         <tbody id="admin-players-body">
@@ -151,6 +217,12 @@
             </div>
         </main>
     </div>
+    <script>
+        function logoutAdmin() {
+            localStorage.removeItem('flamme_admin');
+            window.location.href = 'login.html';
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/main.js"></script>
     <script>
@@ -175,16 +247,24 @@
                     }
 
                     data.forEach(p => {
+                        const defaultAvatar = 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Ghost&backgroundColor=000000';
+                        const avatarUrl = p.avatar ? p.avatar : defaultAvatar;
+
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td class="orbitron">${p.pseudo}</td>
-                            <td>${p.whatsapp}</td>
-                            <td>${p.specialite}</td>
-                            <td>${p.points}</td>
+                            <td>
+                                <div class="player-info-cell">
+                                    <img src="${avatarUrl}" alt="Avatar" class="player-avatar-small">
+                                    <strong class="orbitron" style="color: #fff;">${p.pseudo}</strong>
+                                </div>
+                            </td>
+                            <td style="color: #aaa;">${p.whatsapp}</td>
+                            <td><span style="background: #222; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">${p.specialite}</span></td>
+                            <td><strong style="color: var(--flame-orange); font-size: 1.1rem; font-family: 'Orbitron', sans-serif;">${p.points}</strong></td>
                             <td>
                                 <div class="action-flex">
                                     <button class="btn-action btn-penalize" data-id="${p.id}" data-points="${p.points}" title="-20 pts changement spé">Changer Spé (-20)</button>
-                                    <button class="btn-action btn-delete" data-id="${p.id}">Supprimer</button>
+                                    <button class="btn-action btn-delete" data-id="${p.id}">Exclure</button>
                                 </div>
                             </td>
                         `;
