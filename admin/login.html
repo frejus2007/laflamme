@@ -96,17 +96,51 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/main.js"></script>
     <script>
-        document.getElementById('admin-login-form').addEventListener('submit', function (e) {
+        document.getElementById('admin-login-form').addEventListener('submit', async function (e) {
             e.preventDefault();
-            // Basic hardcoded logic for now. Real app: check with Supabase
+            
             const user = document.getElementById('admin-user').value;
             const pass = document.getElementById('admin-pass').value;
+            const errorDiv = document.getElementById('admin-error');
+            const submitBtn = this.querySelector('button[type="submit"]');
 
-            if (user === 'admin' && pass === 'flamme2026') { // Mock credentials
-                window.location.href = 'index.html'; // Admin dashboard
-            } else {
-                document.getElementById('admin-error').style.display = 'block';
+            errorDiv.style.display = 'none';
+            submitBtn.textContent = 'Vérification...';
+            submitBtn.disabled = true;
+
+            try {
+                if (!window.supabaseClient) throw new Error("Supabase non initialisé");
+
+                const { data, error } = await window.supabaseClient
+                    .from('admins')
+                    .select('id, identifiant, mot_de_passe')
+                    .eq('identifiant', user)
+                    .single();
+
+                if (error || !data) {
+                    throw new Error("Identifiant ou mot de passe incorrect.");
+                }
+
+                if (data.mot_de_passe === pass) {
+                    // Set an admin session specifically
+                    localStorage.setItem('flamme_admin', JSON.stringify({
+                        id: data.id,
+                        identifiant: data.identifiant
+                    }));
+                    window.location.href = 'index.html'; // Redirect to dashboard
+                } else {
+                    throw new Error("Identifiant ou mot de passe incorrect.");
+                }
+
+            } catch (err) {
+                console.error(err);
+                errorDiv.textContent = err.message || "Erreur de connexion";
+                errorDiv.style.display = 'block';
+                submitBtn.textContent = 'Connexion Admin';
+                submitBtn.disabled = false;
             }
         });
     </script>

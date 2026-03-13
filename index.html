@@ -15,7 +15,11 @@
             right: 50%;
             margin-left: -50vw;
             margin-right: -50vw;
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop') center/cover;
+            background-color: #050000;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8)), url('images/hero-bg.jpg');
+            background-position: center;
+            background-size: 800px;
+            background-repeat: no-repeat;
             padding: 120px 5%;
             text-align: center;
             border-bottom: 4px solid var(--flame-orange);
@@ -184,7 +188,7 @@
                     <div class="panel-header">
                         <h2 class="panel-title" style="font-size: 1.5rem;">SAISON EN COURS</h2>
                     </div>
-                    <p style="color: var(--text-muted);">Saison d'éveil - Fin prévue le 16/03/2026</p>
+                    <p style="color: var(--text-muted);" id="home-season-info">Chargement...</p>
                     <div class="timer-grid" id="season-timer">
                         <div class="time-box"><span class="num" id="days">00</span><span class="lbl">Jours</span></div>
                         <div class="time-box"><span class="num" id="hours">00</span><span class="lbl">Heures</span>
@@ -229,9 +233,56 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const podiumContainer = document.getElementById('home-podium');
+            const seasonInfo = document.getElementById('home-season-info');
 
             try {
                 if (!window.supabaseClient) throw new Error("Supabase non initialisé");
+
+                // --- 1. Load Current Season for Countdown ---
+                const { data: seasonData, error: seasonError } = await window.supabaseClient
+                    .from('saisons')
+                    .select('*')
+                    .eq('est_active', true)
+                    .order('date_debut', { ascending: false })
+                    .limit(1);
+
+                if (!seasonError && seasonData && seasonData.length > 0) {
+                    const activeSeason = seasonData[0];
+                    const endDateStr = new Date(activeSeason.date_fin).toLocaleDateString('fr-FR');
+                    seasonInfo.textContent = `${activeSeason.nom} - Fin prévue le ${endDateStr}`;
+
+                    // Set up countdown interval
+                    const countDownDate = new Date(activeSeason.date_fin).getTime();
+                    
+                    const updateCountdown = () => {
+                        const now = new Date().getTime();
+                        const distance = countDownDate - now;
+
+                        if (distance < 0) {
+                            document.getElementById("season-timer").innerHTML = "<div style='grid-column: span 2; text-align:center; color:#ff3333;'>Saison Terminée</div>";
+                            return;
+                        }
+
+                        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                        document.getElementById("days").innerHTML = days < 10 ? '0' + days : days;
+                        document.getElementById("hours").innerHTML = hours < 10 ? '0' + hours : hours;
+                        document.getElementById("minutes").innerHTML = minutes < 10 ? '0' + minutes : minutes;
+                        document.getElementById("seconds").innerHTML = seconds < 10 ? '0' + seconds : seconds;
+                    };
+
+                    updateCountdown(); // Run once immediately
+                    setInterval(updateCountdown, 1000); // And then every second
+
+                } else {
+                    seasonInfo.textContent = "Aucune saison active";
+                    document.getElementById("season-timer").innerHTML = "<div style='grid-column: span 2; text-align:center; color:#aaa;'>En attente de la prochaine saison...</div>";
+                }
+
+                // --- 2. Load Top 3 Players ---
 
                 const { data, error } = await window.supabaseClient
                     .from('joueurs')

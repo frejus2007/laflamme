@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 
 <head>
@@ -79,35 +79,69 @@
         <p style="text-align: center; color: #aaa; margin-bottom: 40px;">Participez aux tournois internes et affrontez
             d'autres clans !</p>
 
-        <div class="panel">
-            <div class="panel-header">
-                <h3 class="panel-title" style="color: var(--flame-yellow);">🔥 Tournoi d'Hiver - Saison 1</h3>
-            </div>
-            <div style="padding: 20px;">
-                <p><strong>Mode :</strong> Battle Royale (Squad)</p>
-                <p><strong>Date :</strong> 25 Mars 2026</p>
-                <p><strong>Récompense :</strong> Titre exclusif In-Game + 500 points au classement</p>
-                <p style="margin-top: 15px; color: #33ff33;">Statut : Inscriptions Ouvertes</p>
-                <button class="btn" style="margin-top: 20px;">S'INSCRIRE AVEC SA SQUAD</button>
-            </div>
-        </div>
-
-        <div class="panel" style="margin-top: 30px; opacity: 0.7;">
-            <div class="panel-header">
-                <h3 class="panel-title" style="color: #aaa;">❄️ Tournoi MJ - 1v1 Sniper</h3>
-            </div>
-            <div style="padding: 20px;">
-                <p><strong>Mode :</strong> Multijoueur (1v1)</p>
-                <p><strong>Date :</strong> 10 Février 2026</p>
-                <p><strong>Vainqueur :</strong> ƑL丨Ghost</p>
-                <p style="margin-top: 15px; color: #ff3333;">Statut : Terminé</p>
-            </div>
+        <div id="tournois-container">
+            <p style="text-align: center; color: #aaa;">Chargement des tournois en cours...</p>
         </div>
     </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tournoisContainer = document.getElementById('tournois-container');
+
+            try {
+                if (!window.supabaseClient) throw new Error("Supabase non initialisé");
+
+                const { data, error } = await window.supabaseClient
+                    .from('tournois')
+                    .select('*')
+                    .order('date_tournoi', { ascending: false });
+
+                if (error) throw error;
+
+                tournoisContainer.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    tournoisContainer.innerHTML = '<p style="text-align: center; color: #aaa;">Aucun tournoi disponible pour le moment.</p>';
+                    return;
+                }
+
+                data.forEach(tournoi => {
+                    const statusColor = tournoi.statut === 'Ouvert' ? '#33ff33' : (tournoi.statut === 'Terminé' ? '#ff3333' : '#aaa');
+                    const opacity = tournoi.statut === 'Terminé' ? '0.7' : '1';
+                    const icon = tournoi.statut === 'Terminé' ? '❄️' : '🔥';
+                    const titleColor = tournoi.statut === 'Terminé' ? '#aaa' : 'var(--flame-yellow)';
+                    
+                    const btnHtml = tournoi.statut === 'Ouvert' ? '<button class="btn" style="margin-top: 20px;" onclick="alert(\'Inscription via WhatsApp du Clan !\')">S\'INSCRIRE</button>' : '';
+
+                    const div = document.createElement('div');
+                    div.className = 'panel';
+                    div.style.marginTop = '30px';
+                    div.style.opacity = opacity;
+                    div.innerHTML = `
+                        <div class="panel-header">
+                            <h3 class="panel-title" style="color: ${titleColor};">${icon} ${tournoi.nom}</h3>
+                        </div>
+                        <div style="padding: 20px;">
+                            <p><strong>Mode :</strong> ${tournoi.mode}</p>
+                            <p><strong>Date :</strong> ${new Date(tournoi.date_tournoi).toLocaleDateString('fr-FR')}</p>
+                            ${tournoi.description ? `<p><strong>Description :</strong> ${tournoi.description}</p>` : ''}
+                            ${tournoi.recompense ? `<p><strong>Récompense :</strong> ${tournoi.recompense}</p>` : ''}
+                            <p style="margin-top: 15px; color: ${statusColor};">Statut : ${tournoi.statut}</p>
+                            ${btnHtml}
+                        </div>
+                    `;
+                    tournoisContainer.appendChild(div);
+                });
+
+            } catch (err) {
+                console.error("Erreur de chargement des tournois:", err);
+                tournoisContainer.innerHTML = '<p style="text-align: center; color: #ff3333;">Erreur lors du chargement des tournois.</p>';
+            }
+        });
+    </script>
 </body>
 
 </html>

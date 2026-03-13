@@ -43,21 +43,57 @@ CREATE TABLE IF NOT EXISTS matchs (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
+-- 4. Table des Admins
+CREATE TABLE IF NOT EXISTS admins (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    identifiant TEXT UNIQUE NOT NULL,
+    mot_de_passe TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+-- 5. Table des Tournois
+CREATE TABLE IF NOT EXISTS tournois (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    nom TEXT NOT NULL,
+    mode TEXT NOT NULL,
+    date_tournoi DATE NOT NULL,
+    statut TEXT DEFAULT 'Ouvert', -- 'Ouvert', 'En Cours', 'Terminé'
+    description TEXT,
+    recompense TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
 -- Setup initial
 -- Activer la RLS (Row Level Security) - pour le moment, on l'assouplit pour faciliter l'intégration car on est pas sur de l'auth Supabase stricte
 ALTER TABLE joueurs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE matchs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE saisons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admins ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tournois ENABLE ROW LEVEL SECURITY;
 
 -- Autoriser la lecture publique (si on ne gère pas les JWT strictes de Supabase Auth pour l'instant et on utilise l'API standard anonyme)
 CREATE POLICY "Lecture publique des joueurs" ON joueurs FOR SELECT USING (true);
 CREATE POLICY "Insertion publique joueurs" ON joueurs FOR INSERT WITH CHECK (true);
 CREATE POLICY "Modification publique joueurs" ON joueurs FOR UPDATE USING (true);
+CREATE POLICY "Suppression publique joueurs" ON joueurs FOR DELETE USING (true);
 
 CREATE POLICY "Lecture publique matchs" ON matchs FOR SELECT USING (true);
 CREATE POLICY "Insertion publique matchs" ON matchs FOR INSERT WITH CHECK (true);
 
 CREATE POLICY "Lecture publique saisons" ON saisons FOR SELECT USING (true);
+CREATE POLICY "Insertion publique saisons" ON saisons FOR INSERT WITH CHECK (true);
+CREATE POLICY "Modification publique saisons" ON saisons FOR UPDATE USING (true);
+
+CREATE POLICY "Lecture publique admins" ON admins FOR SELECT USING (true);
+
+CREATE POLICY "Lecture publique tournois" ON tournois FOR SELECT USING (true);
+CREATE POLICY "Insertion publique tournois" ON tournois FOR INSERT WITH CHECK (true);
 
 -- Insert une fausse saison pour démarrer
-INSERT INTO saisons (nom, date_debut, date_fin, est_active) VALUES ('Saison 1 - L''Éveil', '2026-01-16', '2026-03-16', true);
+INSERT INTO saisons (id, nom, date_debut, date_fin, est_active) VALUES ('c8e10419-f55a-46da-b7a4-31ea6737f000', 'Saison 1 - L''Éveil', '2026-01-16', '2026-03-16', true) ON CONFLICT DO NOTHING;
+
+-- Insert default admin
+INSERT INTO admins (identifiant, mot_de_passe) VALUES ('admin', 'flamme2026') ON CONFLICT DO NOTHING;
+
+-- Insert default tournoi
+INSERT INTO tournois (nom, mode, date_tournoi, statut, description, recompense) VALUES ('Tournoi d''Hiver - Saison 1', 'Battle Royale (Squad)', '2026-03-25', 'Ouvert', 'Participez aux tournois internes et affrontez d''autres clans !', 'Titre exclusif In-Game + 500 points au classement') ON CONFLICT DO NOTHING;
