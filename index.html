@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Flamme 🔥 - Officiel</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Specific Homepage Layout */
+        .hero-banner {
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop') center/cover;
+            padding: 120px 5%;
+            text-align: center;
+            border-bottom: 4px solid var(--flame-orange);
+            margin-bottom: 60px;
+        }
+
+        .hero-banner .hero-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+            text-shadow: var(--glow-orange);
+        }
+
+        .hero-banner h1 {
+            font-size: 3.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 1);
+        }
+
+        .hero-banner p {
+            font-size: 1.1rem;
+            color: var(--flame-yellow);
+            max-width: 800px;
+            margin: 0 auto 30px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .home-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 40px;
+        }
+
+        /* Countdown Block */
+        .timer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .time-box {
+            background: var(--bg-darker);
+            padding: 20px 10px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        .time-box .num {
+            font-size: 1.8rem;
+            color: var(--flame-yellow);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            display: block;
+        }
+
+        .time-box .lbl {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        /* Wide Podium Block */
+        .podium-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .podium-row {
+            display: flex;
+            align-items: center;
+            background: var(--bg-darker);
+            padding: 20px;
+            border-left: 5px solid #333;
+            transition: 0.3s;
+        }
+
+        .podium-row:hover {
+            background: #151515;
+            transform: translateX(10px);
+        }
+
+        .podium-row.gold {
+            border-left-color: var(--flame-yellow);
+        }
+
+        .podium-row.silver {
+            border-left-color: #c0c0c0;
+        }
+
+        .podium-row.bronze {
+            border-left-color: #cd7f32;
+        }
+
+        .podium-rank-icon {
+            font-size: 1.5rem;
+            width: 50px;
+            text-align: center;
+            margin-right: 15px;
+        }
+
+        .podium-info {
+            flex: 1;
+        }
+
+        .podium-info h3 {
+            color: #fff;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .podium-info span {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .podium-score {
+            font-size: 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--flame-orange);
+            font-weight: bold;
+        }
+
+        @media (max-width: 1024px) {
+            .home-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-banner h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="embers-canvas"></canvas>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">🔥 LA FLAMME</a>
+        <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
+        <div class="nav-links">
+            <a href="index.html" class="active">ACCUEIL</a>
+            <a href="classement.html">CLASSEMENT</a>
+            <a href="profil.html">PROFIL</a>
+            <a href="regles.html">RÈGLES</a>
+            <a href="tournois.html">TOURNOIS</a>
+            <a href="connexion.html" class="btn btn-outline btn-small" style="margin-left: 20px;">CONNEXION</a>
+        </div>
+    </nav>
+
+    <div class="hero-banner">
+        <div class="hero-icon">🔥</div>
+        <h1>LA FLAMME ESPORT</h1>
+        <p>REJOIGNEZ LE CLAN. DOMINEZ LE CHAMP DE BATAILLE. MOBILE MULTIJOUEUR ET BATTLE ROYALE.</p>
+        <a href="register.html" class="btn">RECRUTEMENT OUVERT</a>
+    </div>
+
+    <div class="container" style="padding-top: 0;">
+        <div class="home-grid">
+
+            <!-- Sidebar / Season info -->
+            <div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title" style="font-size: 1.5rem;">SAISON EN COURS</h2>
+                    </div>
+                    <p style="color: var(--text-muted);">Saison d'éveil - Fin prévue le 16/03/2026</p>
+                    <div class="timer-grid" id="season-timer">
+                        <div class="time-box"><span class="num" id="days">00</span><span class="lbl">Jours</span></div>
+                        <div class="time-box"><span class="num" id="hours">00</span><span class="lbl">Heures</span>
+                        </div>
+                        <div class="time-box"><span class="num" id="minutes">00</span><span class="lbl">Minutes</span>
+                        </div>
+                        <div class="time-box"><span class="num" id="seconds">00</span><span class="lbl">Secondes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content / Top 3 -->
+            <div>
+                <div class="panel">
+                    <div class="panel-header"
+                        style="display:flex; justify-content:space-between; align-items:flex-end;">
+                        <h2 class="panel-title">TOP 3 CLASSEMENT</h2>
+                        <a href="classement.html"
+                            style="color: var(--flame-orange); text-decoration: none; font-size: 0.9rem; font-family:'Orbitron', sans-serif;">VOIR
+                            LE TABLEAU COMPLET ></a>
+                    </div>
+
+                    <div class="podium-list" id="home-podium">
+                        <!-- Loaded dynamically via JS -->
+                        <div style="text-align:center; padding: 20px; color: #aaa;">Chargement
+                            du Top 3...</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 La Flamme – Clan COD Mobile. Élite Esport.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const podiumContainer = document.getElementById('home-podium');
+
+            try {
+                if (!window.supabaseClient) throw new Error("Supabase non initialisé");
+
+                const { data, error } = await window.supabaseClient
+                    .from('joueurs')
+                    .select('pseudo, grade, points, specialite')
+                    .order('points', { ascending: false })
+                    .limit(3);
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    podiumContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: #aaa;">Aucun joueur trouvé.</div>';
+                    return;
+                }
+
+                podiumContainer.innerHTML = '';
+
+                data.forEach((player, index) => {
+                    const rank = index + 1;
+                    let icon, rowClass;
+
+                    if (rank === 1) {
+                        icon = '👑';
+                        rowClass = 'gold';
+                    } else if (rank === 2) {
+                        icon = '🥈';
+                        rowClass = 'silver';
+                    } else {
+                        icon = '🥉';
+                        rowClass = 'bronze';
+                    }
+
+                    const row = document.createElement('div');
+                    row.className = `podium-row ${rowClass}`;
+                    row.innerHTML = `
+                        <div class="podium-rank-icon">${icon}</div>
+                        <div class="podium-info">
+                            <h3 class="orbitron">${player.pseudo}</h3>
+                            <span>${player.grade} • Spécialité ${player.specialite}</span>
+                        </div>
+                        <div class="podium-score">${player.points}</div>
+                    `;
+                    podiumContainer.appendChild(row);
+                });
+
+            } catch (err) {
+                console.error("Erreur de chargement du top 3:", err);
+                podiumContainer.innerHTML = '<div style="text-align:center; padding: 20px; color: #ff3333;">Erreur de chargement des données.</div>';
+            }
+        });
+    </script>
+</body>
+
+</html>

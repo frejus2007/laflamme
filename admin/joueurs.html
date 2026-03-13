@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Joueurs - Admin</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body {
+            background-color: #111;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: 250px;
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand {
+            color: var(--flame-orange);
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: var(--glow-orange);
+            font-family: 'Orbitron', sans-serif;
+            text-decoration: none;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 15px 25px;
+            color: #aaa;
+            text-decoration: none;
+            transition: 0.3s;
+            border-left: 3px solid transparent;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255, 115, 0, 0.1);
+            color: #fff;
+            border-left-color: var(--flame-orange);
+        }
+
+        .admin-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+
+        .admin-header h1 {
+            font-size: 2rem;
+            color: #fff;
+        }
+
+        .action-flex {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #33aaff;
+        }
+
+        .btn-delete {
+            background: #ff3333;
+        }
+
+        .btn-penalize {
+            background: #ccaa00;
+        }
+
+        .admin-table th {
+            background: #222;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <a href="index.html" class="sidebar-brand">🔥 ADMIN</a>
+            <ul class="sidebar-menu">
+                <li><a href="index.html">Ajouter un Match</a></li>
+                <li><a href="joueurs.html" class="active">Gestion Joueurs</a></li>
+                <li><a href="saisons.html">Gestion Saisons</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <div class="admin-header">
+                <h1>Gestion des Joueurs</h1>
+                <button class="btn btn-outline">+ NOUVEAU JOUEUR</button>
+            </div>
+
+            <div class="card" style="padding: 20px;">
+                <div class="table-responsive">
+                    <table class="gaming-table admin-table" style="font-size: 0.9rem;">
+                        <thead>
+                            <tr>
+                                <th>Pseudo</th>
+                                <th>WhatsApp</th>
+                                <th>Spécialité</th>
+                                <th>Points</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-players-body">
+                            <!-- Players loaded dynamically -->
+                            <tr>
+                                <td colspan="5" style="text-align:center;">Chargement des joueurs...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tbody = document.getElementById('admin-players-body');
+
+            async function loadPlayers() {
+                try {
+                    if (!window.supabaseClient) throw new Error("Supabase non initialisé");
+
+                    const { data, error } = await window.supabaseClient
+                        .from('joueurs')
+                        .select('*')
+                        .order('points', { ascending: false });
+
+                    if (error) throw error;
+
+                    tbody.innerHTML = '';
+                    if (!data || data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucun joueur trouvé</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(p => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="orbitron">${p.pseudo}</td>
+                            <td>${p.whatsapp}</td>
+                            <td>${p.specialite}</td>
+                            <td>${p.points}</td>
+                            <td>
+                                <div class="action-flex">
+                                    <button class="btn-action btn-penalize" data-id="${p.id}" data-points="${p.points}" title="-20 pts changement spé">Changer Spé (-20)</button>
+                                    <button class="btn-action btn-delete" data-id="${p.id}">Supprimer</button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    // Attach events
+                    document.querySelectorAll('.btn-delete').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            if (confirm("Supprimer ce joueur ?")) {
+                                const id = e.target.getAttribute('data-id');
+                                await window.supabaseClient.from('joueurs').delete().eq('id', id);
+                                loadPlayers();
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('.btn-penalize').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            if (confirm("Appliquer -20 points pour changement de spécialité ?")) {
+                                const id = e.target.getAttribute('data-id');
+                                const currentPts = parseInt(e.target.getAttribute('data-points'));
+                                const newPts = (currentPts - 20).toString();
+                                await window.supabaseClient.from('joueurs').update({ points: newPts }).eq('id', id);
+                                loadPlayers();
+                            }
+                        });
+                    });
+
+                } catch (err) {
+                    console.error("Erreur", err);
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Erreur de chargement.</td></tr>';
+                }
+            }
+
+            loadPlayers();
+        });
+    </script>
+</body>
+
+</html>

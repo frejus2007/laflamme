@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Règles - La Flamme 🔥</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .rules-container {
+            max-width: 1200px;
+        }
+
+        .rules-section {
+            background: var(--bg-panel);
+            border-top: 3px solid var(--flame-orange);
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .rules-section h2 {
+            color: var(--flame-orange);
+            margin-bottom: 25px;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .rules-section p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: #ddd;
+        }
+
+        .rules-section ul {
+            margin-bottom: 15px;
+            padding-left: 20px;
+            color: #ddd;
+        }
+
+        .rules-section ul li {
+            margin-bottom: 5px;
+        }
+
+        .formula-box {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px dashed var(--flame-orange);
+            padding: 15px;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--flame-yellow);
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 1.1rem;
+            box-shadow: inset 0 0 10px rgba(255, 115, 0, 0.1);
+        }
+
+        .points-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .points-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mini-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .mini-table th,
+        .mini-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        .mini-table th {
+            background: #151515;
+            color: var(--flame-orange);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .mini-table tr:hover td {
+            background: #111;
+        }
+
+        .malus {
+            color: #ff3333;
+            font-weight: bold;
+        }
+
+        .bonus {
+            color: #33ff33;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="embers-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">🔥 LA FLAMME</a>
+        <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
+        <div class="nav-links">
+            <a href="index.html">ACCUEIL</a>
+            <a href="classement.html">CLASSEMENT</a>
+            <a href="profil.html">PROFIL</a>
+            <a href="regles.html" class="active">RÈGLES</a>
+            <a href="tournois.html">TOURNOIS</a>
+            <a href="connexion.html" class="btn btn-outline btn-small" style="margin-left: 20px;">CONNEXION</a>
+        </div>
+    </nav>
+
+    <div class="container rules-container">
+        <h1 class="orbitron"
+            style="text-align: center; color: var(--flame-orange); text-shadow: var(--glow-orange); margin-bottom: 40px; font-size: 2.5rem;">
+            RÈGLES ET POINTS</h1>
+
+        <!-- Intro -->
+        <div class="rules-section">
+            <h2>📜 Introduction</h2>
+            <p>Bienvenue dans le manuel officiel du clan <strong>La Flamme</strong>. Le système de points du clan est
+                strict, automatique, et valide par l'administration.</p>
+            <p>Les points d'un joueur suite à un match sont calculés selon la base suivante :</p>
+            <div class="formula-box">Points du Match = Points de Rang + Bonus MVP + Bonus Admin</div>
+            <p><strong>Note importante :</strong> Les KILLS sont enregistrés sur votre profil et aident au classement,
+                mais <em>ne donnent pas directement de points clan</em>.</p>
+        </div>
+
+        <!-- Mode MJ -->
+        <div class="rules-section">
+            <h2>🎮 Mode Multijoueur (MJ)</h2>
+            <p>Le gain de points dépend de la victoire ou de la défaite de l'équipe, ainsi que de votre classement
+                individuel en fin de partie.</p>
+
+            <div class="points-grid">
+                <div>
+                    <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1rem;">Équipe Gagnante</h3>
+                    <table class="mini-table">
+                        <tr>
+                            <th>Rang</th>
+                            <th>Points</th>
+                        </tr>
+                        <tr>
+                            <td>1er</td>
+                            <td class="bonus">+10</td>
+                        </tr>
+                        <tr>
+                            <td>2ème</td>
+                            <td class="bonus">+7</td>
+                        </tr>
+                        <tr>
+                            <td>3ème</td>
+                            <td class="bonus">+5</td>
+                        </tr>
+                        <tr>
+                            <td>4ème</td>
+                            <td class="bonus">+3</td>
+                        </tr>
+                        <tr>
+                            <td>5ème</td>
+                            <td class="bonus">+2</td>
+                        </tr>
+                        <tr>
+                            <td>6 et +</td>
+                            <td>0</td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1rem;">Équipe Perdante</h3>
+                    <table class="mini-table">
+                        <tr>
+                            <th>Rang</th>
+                            <th>Points</th>
+                        </tr>
+                        <tr>
+                            <td>1er</td>
+                            <td class="bonus">+5</td>
+                        </tr>
+                        <tr>
+                            <td>2ème</td>
+                            <td class="bonus">+3</td>
+                        </tr>
+                        <tr>
+                            <td>3ème</td>
+                            <td class="bonus">+1</td>
+                        </tr>
+                        <tr>
+                            <td>4ème</td>
+                            <td class="malus">-3</td>
+                        </tr>
+                        <tr>
+                            <td>5ème</td>
+                            <td class="malus">-5</td>
+                        </tr>
+                    </table>
+                    <p style="font-size: 0.8rem; margin-top: 5px; color: #888;">* Les deux derniers joueurs de l'équipe
+                        perdante reçoivent un malus.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mode BR -->
+        <div class="rules-section">
+            <h2>🪂 Mode Battle Royale (BR)</h2>
+            <p>En Battle Royale, les points dépendent de votre classement final comparé au nombre de joueurs total.</p>
+            <div class="formula-box" style="font-size: 0.9rem;">
+                Formule : Arrondi( (Nombre_joueurs − Rang + 1) / Nombre_joueurs × 20 )
+            </div>
+            <p>Exemple pour une partie de 20 joueurs :</p>
+            <table class="mini-table" style="max-width: 300px;">
+                <tr>
+                    <th>Rang</th>
+                    <th>Points</th>
+                </tr>
+                <tr>
+                    <td>1er</td>
+                    <td class="bonus">+20</td>
+                </tr>
+                <tr>
+                    <td>5ème</td>
+                    <td class="bonus">+16</td>
+                </tr>
+                <tr>
+                    <td>10ème</td>
+                    <td class="bonus">+11</td>
+                </tr>
+                <tr>
+                    <td>20ème</td>
+                    <td>+1</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Bonus et Malus spéciales -->
+        <div class="rules-section">
+            <h2>⭐ Bonus & Malus Spéciaux</h2>
+            <ul>
+                <li><strong>MVP (Most Valuable Player) :</strong> <span class="bonus">+5 points</span> accordés
+                    automatiquement si la case MVP est cochée lors de l'ajout.</li>
+                <li><strong>Bonus Admin :</strong> Variables. Les admins peuvent ajouter manuellement des points
+                    exceptionnels (ex: +2, +5, +10) via le formulaire.</li>
+                <li><strong>Changement de Spécialité (MJ ↔ BR) :</strong> Pénalité stricte de <span class="malus">-20
+                        points</span>. Maximum autorisé : 1 fois par saison.</li>
+            </ul>
+        </div>
+
+        <!-- Grades -->
+        <div class="rules-section">
+            <h2>🎖️ Système de Grades</h2>
+            <p>Les grades affichent l'investissement et le succès des joueurs. Ils montent automatiquement en fonction
+                du seuil de points clan :</p>
+            <table class="mini-table" style="max-width: 400px; margin-top: 15px;">
+                <tr>
+                    <th>Points Requis</th>
+                    <th>Grade Atteint</th>
+                </tr>
+                <tr>
+                    <td>0</td>
+                    <td>Recrue</td>
+                </tr>
+                <tr>
+                    <td>120</td>
+                    <td>Soldat</td>
+                </tr>
+                <tr>
+                    <td>300</td>
+                    <td>Sergent</td>
+                </tr>
+                <tr>
+                    <td>600</td>
+                    <td>Lieutenant</td>
+                </tr>
+                <tr>
+                    <td>950</td>
+                    <td>Commandant</td>
+                </tr>
+                <tr>
+                    <td>1400</td>
+                    <td><span style="color: var(--flame-yellow); text-shadow: var(--glow-yellow);">Général</span></td>
+                </tr>
+            </table>
+            <p style="text-align: center; margin-top: 15px;"><a href="register.html" class="btn btn-outline">Rejoindre
+                    le Clan</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

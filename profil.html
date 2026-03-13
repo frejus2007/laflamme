@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - La Flamme 🔥</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .profile-container {
+            margin-top: 40px;
+        }
+
+        /* The ID Card */
+        .id-card {
+            background: var(--bg-panel);
+            border-top: 3px solid var(--flame-orange);
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Fake Hologram effect */
+        .id-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.05) 40%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    rgba(255, 255, 255, 0) 60%,
+                    rgba(255, 255, 255, 0) 100%);
+            transform: rotate(30deg);
+            pointer-events: none;
+            animation: holo 6s infinite linear;
+        }
+
+        @keyframes holo {
+            from {
+                transform: translate(-30%, -30%) rotate(30deg);
+            }
+
+            to {
+                transform: translate(30%, 30%) rotate(30deg);
+            }
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            border-bottom: 1px solid rgba(255, 115, 0, 0.3);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .profile-avatar {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 3px solid var(--flame-orange);
+            box-shadow: var(--glow-orange);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+        }
+
+        .profile-info h2 {
+            font-size: 1.8rem;
+            color: var(--flame-yellow);
+            text-shadow: var(--glow-yellow);
+            margin-bottom: 5px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .profile-info .subtitle {
+            font-family: 'Roboto', sans-serif;
+            color: #ccc;
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 15px;
+            background: rgba(255, 115, 0, 0.15);
+            border: 1px solid var(--flame-orange);
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: var(--flame-yellow);
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            transition: 0.3s;
+        }
+
+        .stat-box:hover {
+            border-color: var(--flame-orange);
+            box-shadow: var(--glow-orange);
+            transform: translateY(-3px);
+        }
+
+        .stat-box .value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-box .value.points {
+            color: var(--flame-yellow);
+            text-shadow: var(--glow-yellow);
+        }
+
+        .stat-box .label {
+            font-size: 0.75rem;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid #222;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .progress-header span {
+            color: var(--flame-orange);
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--flame-orange), var(--flame-yellow));
+            width: 60%;
+            /* Example width */
+            border-radius: 10px;
+            box-shadow: var(--glow-orange);
+            transition: width 1s ease-in-out;
+        }
+
+        .grade-path {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .grade-path span.achieved {
+            color: var(--flame-yellow);
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+
+        .profile-actions {
+            margin-top: 35px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .grade-path {
+                display: none;
+                /* Hide full path on mobile to save space */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="embers-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">🔥 LA FLAMME</a>
+        <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
+        <div class="nav-links">
+            <a href="index.html">ACCUEIL</a>
+            <a href="classement.html">CLASSEMENT</a>
+            <a href="profil.html" class="active">PROFIL</a>
+            <a href="regles.html">RÈGLES</a>
+            <a href="tournois.html">TOURNOIS</a>
+            <a href="connexion.html" id="nav-logout" class="btn btn-outline btn-small"
+                style="margin-left: 20px; color: #ff3333; border-color: #ff3333;">DÉCONNEXION</a>
+        </div>
+    </nav>
+
+    <div class="container profile-container">
+        <div class="id-card" id="user-profile-card">
+            <div class="profile-header">
+                <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Ghost&backgroundColor=000000"
+                    alt="Avatar" class="profile-avatar" id="prof-avatar">
+                <div class="profile-info">
+                    <h2 id="prof-pseudo">ƑL丨Ghost</h2>
+                    <div class="subtitle" id="prof-prenom">John Doe</div>
+                    <div>
+                        <span class="badge" id="prof-spec">Spécialité: MJ</span>
+                        <span class="badge" id="prof-grade" style="border-color: var(--flame-yellow);">Général</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="value points" id="prof-points">1500</div>
+                    <div class="label">Points</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value" id="prof-kills">342</div>
+                    <div class="label">Kills Cumulés</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value" id="prof-record-kills">45</div>
+                    <div class="label">Record Kills</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value" id="prof-record-points">25</div>
+                    <div class="label">Record Points Max</div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span>Grade Actuel: <span id="current-grade-text"
+                            style="color:var(--text-color);">Lieutenant</span></span>
+                    <span>Prochain Grade: <span id="next-grade-text"
+                            style="color:var(--text-color);">Commandant</span></span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="grade-progress-bar" style="width: 60%;"></div>
+                </div>
+                <div class="grade-path">
+                    <span class="achieved">Recrue</span>
+                    <span class="achieved">Soldat</span>
+                    <span class="achieved">Sergent</span>
+                    <span class="achieved">Lieutenant</span>
+                    <span>Commandant</span>
+                    <span>Général</span>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <a href="index.html" class="btn btn-outline" style="min-width: 150px;">ACCUEIL</a>
+                <a href="connexion.html" id="btn-logout" class="btn"
+                    style="background: #aa0000; min-width: 150px;">DÉCONNEXION</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const sessionData = localStorage.getItem('flamme_user');
+            if (!sessionData) {
+                window.location.href = 'connexion.html';
+                return;
+            }
+
+            const userSession = JSON.parse(sessionData);
+
+            try {
+                if (!window.supabaseClient) throw new Error("Supabase non initialisé");
+
+                const { data, error } = await window.supabaseClient
+                    .from('joueurs')
+                    .select('*')
+                    .eq('whatsapp', userSession.whatsapp)
+                    .single();
+
+                if (error || !data) {
+                    console.error("User not found in DB");
+                    localStorage.removeItem('flamme_user');
+                    window.location.href = 'connexion.html';
+                    return;
+                }
+
+                // Populate UI
+                document.getElementById('prof-pseudo').textContent = data.pseudo;
+                document.getElementById('prof-prenom').textContent = data.prenom;
+                document.getElementById('prof-spec').textContent = `Spécialité: ${data.specialite}`;
+                document.getElementById('prof-grade').textContent = data.grade;
+                document.getElementById('prof-avatar').src = data.avatar;
+
+                document.getElementById('prof-points').textContent = data.points;
+                document.getElementById('prof-kills').textContent = data.kills;
+                document.getElementById('prof-record-kills').textContent = data.record_kills;
+                document.getElementById('prof-record-points').textContent = data.record_points;
+
+                // Grade logic calculation (Simplified example based on points)
+                const grades = ['Recrue', 'Soldat', 'Sergent', 'Lieutenant', 'Commandant', 'Général'];
+                let currentGradeIndex = grades.indexOf(data.grade);
+                if (currentGradeIndex === -1) currentGradeIndex = 0;
+
+                const nextGradeIndex = Math.min(currentGradeIndex + 1, grades.length - 1);
+
+                document.getElementById('current-grade-text').textContent = grades[currentGradeIndex];
+                document.getElementById('next-grade-text').textContent = grades[nextGradeIndex];
+
+                // Update visual path
+                const gradeSpans = document.querySelectorAll('.grade-path span');
+                gradeSpans.forEach((span, idx) => {
+                    if (idx <= currentGradeIndex) {
+                        span.classList.add('achieved');
+                    } else {
+                        span.classList.remove('achieved');
+                    }
+                });
+
+                // Set fake progress percentage
+                const progressPercent = currentGradeIndex === grades.length - 1 ? 100 : 50;
+                document.getElementById('grade-progress-bar').style.width = `${progressPercent}%`;
+
+            } catch (err) {
+                console.error("Erreur chargement profil", err);
+            }
+
+            // Logout Logic
+            const logout = (e) => {
+                e.preventDefault();
+                localStorage.removeItem('flamme_user');
+                window.location.href = 'connexion.html';
+            };
+
+            document.getElementById('btn-logout').addEventListener('click', logout);
+            document.getElementById('nav-logout').addEventListener('click', logout);
+        });
+    </script>
+</body>
+
+</html>

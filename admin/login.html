@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - La Flamme 🔥</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .admin-login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at center, #1a0000 0%, #000 100%);
+        }
+
+        .admin-card {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid #ff3333;
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.2);
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .admin-card h2 {
+            color: #ff3333;
+            text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+            margin-bottom: 30px;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .form-control {
+            border-color: #444;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .form-control:focus {
+            border-color: #ff3333;
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
+        }
+
+        .btn-admin {
+            background: linear-gradient(45deg, #cc0000, #ff3333);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px rgba(255, 51, 51, 0.4);
+        }
+
+        .btn-admin:hover {
+            background: linear-gradient(45deg, #ff3333, #ff6666);
+            box-shadow: 0 0 25px rgba(255, 51, 51, 0.6);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-login-container">
+        <div class="admin-card">
+            <div
+                style="font-size: 50px; text-shadow: 0 0 20px rgba(255, 51, 51, 0.8); margin-bottom: 20px; animation: pulse 2s infinite alternate;">
+                🛡️</div>
+            <h2 class="orbitron">ACCÈS ADMIN</h2>
+
+            <form id="admin-login-form">
+                <div class="form-group" style="text-align: left;">
+                    <label style="color: #ccc;">Identifiant</label>
+                    <input type="text" id="admin-user" class="form-control" placeholder="Admin ID" required>
+                </div>
+                <div class="form-group" style="text-align: left; margin-bottom: 30px;">
+                    <label style="color: #ccc;">Mot de passe</label>
+                    <input type="password" id="admin-pass" class="form-control" placeholder="••••••••" required>
+                </div>
+
+                <div id="admin-error" class="error-message" style="margin-bottom: 15px;">Accès refusé.</div>
+
+                <button type="submit" class="btn-admin">Connexion Admin</button>
+            </form>
+
+            <a href="../index.html"
+                style="display: block; margin-top: 25px; color: #888; text-decoration: none; font-size: 0.9rem;">Retour
+                au site</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('admin-login-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            // Basic hardcoded logic for now. Real app: check with Supabase
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
+
+            if (user === 'admin' && pass === 'flamme2026') { // Mock credentials
+                window.location.href = 'index.html'; // Admin dashboard
+            } else {
+                document.getElementById('admin-error').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+
+</html>

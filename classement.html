@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classement - La Flamme 🔥</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .leaderboard-container {
+            margin-top: 40px;
+        }
+
+        .filter-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--flame-orange);
+            color: var(--text-color);
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: var(--flame-orange);
+            color: #000;
+            box-shadow: var(--glow-orange);
+            border-color: transparent;
+        }
+
+        .rank-icon {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+        }
+
+        /* Top 3 rows styling */
+        .gaming-table tr.top-1 td {
+            background: rgba(255, 215, 0, 0.15);
+            color: var(--flame-yellow);
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .gaming-table tr.top-1 td:nth-child(2) {
+            text-shadow: var(--glow-yellow);
+            font-size: 1.1rem;
+        }
+
+        .gaming-table tr.top-2 td {
+            background: rgba(192, 192, 192, 0.1);
+            border-bottom: 1px solid rgba(192, 192, 192, 0.2);
+        }
+
+        .gaming-table tr.top-3 td {
+            background: rgba(205, 127, 50, 0.1);
+            border-bottom: 1px solid rgba(205, 127, 50, 0.2);
+        }
+
+        .gaming-table td {
+            vertical-align: middle;
+            padding: 15px;
+        }
+
+        .spec-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+        }
+
+        .spec-mj {
+            background: rgba(255, 51, 51, 0.2);
+            color: #ff3333;
+            border: 1px solid #ff3333;
+        }
+
+        .spec-br {
+            background: rgba(51, 170, 255, 0.2);
+            color: #33aaff;
+            border: 1px solid #33aaff;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="embers-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">🔥 LA FLAMME</a>
+        <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
+        <div class="nav-links">
+            <a href="index.html">ACCUEIL</a>
+            <a href="classement.html" class="active">CLASSEMENT</a>
+            <a href="profil.html">PROFIL</a>
+            <a href="regles.html">RÈGLES</a>
+            <a href="tournois.html">TOURNOIS</a>
+            <a href="connexion.html" class="btn btn-outline btn-small" style="margin-left: 20px;">CONNEXION</a>
+        </div>
+    </nav>
+
+    <div class="container leaderboard-container">
+        <h1 style="text-align: center; color: var(--flame-yellow); text-shadow: var(--glow-yellow); margin-bottom: 10px;"
+            class="orbitron">CLASSEMENT OFFICIEL</h1>
+        <p style="text-align: center; color: #aaa; margin-bottom: 40px; font-size: 1.1rem;">Qui dominera le clan La
+            Flamme ?</p>
+
+        <div class="filter-section">
+            <button class="filter-btn active" data-filter="Tous">TOUS</button>
+            <button class="filter-btn" data-filter="MJ">MULTIJOUEUR (MJ)</button>
+            <button class="filter-btn" data-filter="BR">BATTLE ROYALE (BR)</button>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title"
+                    style="text-align: center; color: var(--flame-yellow); text-shadow: var(--glow-yellow);">TABLEAU DE
+                    BORD ESPORT</h2>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table" id="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Pseudo</th>
+                            <th>Grade</th>
+                            <th>Points</th>
+                            <th>Kills</th>
+                            <th>Mode</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                        <!-- Data will be loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tbody = document.getElementById('leaderboard-body');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+
+            let allPlayers = [];
+
+            // Load from Supabase
+            try {
+                if (!window.supabaseClient) throw new Error("Supabase non initialisé");
+
+                const { data, error } = await window.supabaseClient
+                    .from('joueurs')
+                    .select('*')
+                    .order('points', { ascending: false });
+
+                if (error) throw error;
+                allPlayers = data || [];
+                renderLeaderboard('Tous');
+
+            } catch (err) {
+                console.error("Erreur de chargement du classement:", err);
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #ff3333;">Erreur de chargement des données.</td></tr>`;
+            }
+
+            // Render function
+            function renderLeaderboard(filterSpec) {
+                tbody.innerHTML = '';
+
+                let filtered = allPlayers;
+                if (filterSpec !== 'Tous') {
+                    filtered = allPlayers.filter(p => p.specialite === filterSpec);
+                }
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: #aaa;">Aucun joueur trouvé.</td></tr>`;
+                    return;
+                }
+
+                filtered.forEach((player, index) => {
+                    const rank = index + 1;
+                    const tr = document.createElement('tr');
+
+                    let rankHtml = `<td>${rank}</td>`;
+                    let trClass = '';
+                    let pointsStyle = '';
+
+                    if (rank === 1) {
+                        trClass = 'top-1';
+                        rankHtml = `<td><span class="rank-icon">👑</span></td>`;
+                        pointsStyle = 'font-size: 1.2rem;';
+                    } else if (rank === 2) {
+                        trClass = 'top-2';
+                        rankHtml = `<td><span class="rank-icon">🥈</span></td>`;
+                    } else if (rank === 3) {
+                        trClass = 'top-3';
+                        rankHtml = `<td><span class="rank-icon">🥉</span></td>`;
+                    }
+
+                    tr.className = trClass;
+
+                    const specClass = player.specialite === 'MJ' ? 'spec-mj' : 'spec-br';
+
+                    tr.innerHTML = `
+                        ${rankHtml}
+                        <td class="orbitron">${player.pseudo}</td>
+                        <td>${player.grade}</td>
+                        <td class="orbitron" style="${pointsStyle}">${player.points}</td>
+                        <td>${player.kills}</td>
+                        <td><span class="spec-badge ${specClass}">${player.specialite}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // Filters
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const filter = btn.getAttribute('data-filter');
+                    renderLeaderboard(filter);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

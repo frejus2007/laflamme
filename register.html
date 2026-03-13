@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - La Flamme 🔥</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 100px);
+            padding: 40px 20px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 600px;
+            background: var(--bg-panel);
+            border-top: 3px solid var(--flame-orange);
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            color: var(--flame-orange);
+            margin-bottom: 30px;
+            font-size: 2rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        /* Avatars Selection Grid */
+        .avatar-selection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 25px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .avatar-label {
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 50%;
+            transition: 0.3s;
+            padding: 2px;
+        }
+
+        .avatar-label img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            background: var(--bg-darker);
+        }
+
+        .avatar-label input[type="radio"] {
+            display: none;
+        }
+
+        .avatar-label:has(input[type="radio"]:checked) {
+            border-color: var(--flame-yellow);
+            box-shadow: var(--glow-yellow);
+            transform: scale(1.1);
+        }
+
+        .avatar-label:hover {
+            border-color: var(--flame-orange);
+        }
+
+        .input-error {
+            border-color: #ff3333 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="embers-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">🔥 LA FLAMME</a>
+        <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
+        <div class="nav-links">
+            <a href="index.html">ACCUEIL</a>
+            <a href="classement.html">CLASSEMENT</a>
+            <a href="profil.html">PROFIL</a>
+            <a href="regles.html">RÈGLES</a>
+            <a href="tournois.html">TOURNOIS</a>
+            <a href="connexion.html" class="btn btn-outline btn-small" style="margin-left: 20px;">CONNEXION</a>
+        </div>
+    </nav>
+
+    <div class="container auth-container">
+        <div class="card auth-card">
+            <h2>REJOINDRE LE CLAN</h2>
+
+            <form id="register-form">
+                <!-- Avatar Selection -->
+                <div class="form-group" style="text-align: center;">
+                    <label>Choisir un Avatar</label>
+                    <div class="avatar-selection" id="avatar-grid">
+                        <label class="avatar-label">
+                            <input type="radio" name="avatar" value="avatar1" required checked>
+                            <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Ghost&backgroundColor=000000"
+                                alt="Avatar 1">
+                        </label>
+                        <label class="avatar-label">
+                            <input type="radio" name="avatar" value="avatar2">
+                            <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Sniper&backgroundColor=000000"
+                                alt="Avatar 2">
+                        </label>
+                        <label class="avatar-label">
+                            <input type="radio" name="avatar" value="avatar3">
+                            <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Shadow&backgroundColor=000000"
+                                alt="Avatar 3">
+                        </label>
+                        <label class="avatar-label">
+                            <input type="radio" name="avatar" value="avatar4">
+                            <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Reaper&backgroundColor=000000"
+                                alt="Avatar 4">
+                        </label>
+                        <label class="avatar-label">
+                            <input type="radio" name="avatar" value="avatar5">
+                            <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Viper&backgroundColor=000000"
+                                alt="Avatar 5">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="prenom">Prénom</label>
+                    <input type="text" id="prenom" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Numéro WhatsApp</label>
+                    <input type="tel" id="phone" class="form-control" placeholder="06XXXXXXXX" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pseudo">Pseudo In-Game (Doit commencer par ƑL丨)</label>
+                    <input type="text" id="pseudo" class="form-control" value="ƑL丨" required>
+                    <div id="pseudo-error" class="error-message">Le pseudo doit toujours commencer par ƑL丨</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="specialite">Spécialité</label>
+                    <select id="specialite" class="form-control" required>
+                        <option value="" disabled selected>Choisir une spécialité</option>
+                        <option value="MJ">Multijoueur (MJ)</option>
+                        <option value="BR">Battle Royale (BR)</option>
+                    </select>
+                </div>
+
+                <div id="register-error" class="error-message"
+                    style="text-align: center; margin-bottom: 15px; display: none;">Erreur lors de l'inscription</div>
+
+                <button type="submit" class="btn" style="width: 100%;">S'INSCRIRE</button>
+            </form>
+
+            <div class="auth-links">
+                <p>Déjà membre ? <a href="connexion.html">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+    <script>
+        const pseudoInput = document.getElementById('pseudo');
+        const pseudoError = document.getElementById('pseudo-error');
+
+        // Prefix validation and enforcement for pseudo
+        pseudoInput.addEventListener('input', function (e) {
+            if (!this.value.startsWith('ƑL丨')) {
+                pseudoError.style.display = 'block';
+                this.classList.add('input-error');
+            } else {
+                pseudoError.style.display = 'none';
+                this.classList.remove('input-error');
+            }
+        });
+
+        // Ensure user can't easily delete the prefix
+        pseudoInput.addEventListener('keydown', function (e) {
+            if (this.selectionStart < 3 && (e.key === 'Backspace' || e.key === 'Delete')) {
+                e.preventDefault();
+            }
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const errorDiv = document.getElementById('register-error');
+            errorDiv.style.display = 'none';
+
+            if (!pseudoInput.value.startsWith('ƑL丨')) {
+                pseudoError.style.display = 'block';
+                return;
+            }
+
+            const pseudo = pseudoInput.value;
+            const prenom = document.getElementById('prenom').value;
+            const whatsapp = document.getElementById('phone').value;
+            const specialite = document.getElementById('specialite').value;
+            const avatarValue = document.querySelector('input[name="avatar"]:checked').value;
+
+            // Map the avatar value to the seed string used in API
+            const avatarMap = {
+                'avatar1': 'Ghost',
+                'avatar2': 'Sniper',
+                'avatar3': 'Shadow',
+                'avatar4': 'Reaper',
+                'avatar5': 'Viper'
+            };
+            const avatarSeed = avatarMap[avatarValue];
+            const avatarUrl = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${avatarSeed}&backgroundColor=000000`;
+
+            const btn = this.querySelector('button[type="submit"]');
+            btn.textContent = "INSCRIPTION EN COURS...";
+            btn.disabled = true;
+
+            try {
+                if (!window.supabaseClient) {
+                    throw new Error("Erreur de connexion serveur (Supabase non initialisé)");
+                }
+
+                // Call Supabase to insert
+                const { data, error } = await window.supabaseClient
+                    .from('joueurs')
+                    .insert([
+                        {
+                            pseudo: pseudo,
+                            prenom: prenom,
+                            whatsapp: whatsapp,
+                            specialite: specialite,
+                            avatar: avatarUrl
+                        }
+                    ]);
+
+                if (error) {
+                    if (error.code === '23505') { // Unique violation
+                        throw new Error("Ce numéro WhatsApp ou Pseudo est déjà utilisé.");
+                    }
+                    throw error;
+                }
+
+                // Success! Set session (simulated auth state using localStorage)
+                localStorage.setItem('flamme_user', JSON.stringify({
+                    whatsapp: whatsapp,
+                    pseudo: pseudo
+                }));
+
+                window.location.href = 'profil.html';
+
+            } catch (err) {
+                console.error(err);
+                errorDiv.textContent = err.message || "Erreur lors de l'inscription";
+                errorDiv.style.display = 'block';
+                btn.textContent = "S'INSCRIRE";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

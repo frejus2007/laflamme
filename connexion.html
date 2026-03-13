@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - La Flamme 🔥</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 100px);
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 500px;
+            background: var(--bg-panel);
+            border-top: 3px solid var(--flame-orange);
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            color: var(--flame-orange);
+            margin-bottom: 30px;
+            font-size: 2rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="embers-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">🔥 LA FLAMME</a>
+        <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
+        <div class="nav-links">
+            <a href="index.html">ACCUEIL</a>
+            <a href="classement.html">CLASSEMENT</a>
+            <a href="profil.html">PROFIL</a>
+            <a href="regles.html">RÈGLES</a>
+            <a href="tournois.html">TOURNOIS</a>
+            <a href="connexion.html" class="active btn btn-outline btn-small" style="margin-left: 20px;">CONNEXION</a>
+        </div>
+    </nav>
+
+    <div class="container auth-container">
+        <div class="auth-card">
+            <h2>CONNEXION JOUEUR</h2>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="phone">Numéro WhatsApp</label>
+                    <input type="tel" id="phone" class="form-control" placeholder="06XXXXXXXX" required>
+                    <div id="login-error" class="error-message">Numéro inconnu / Identifiants incorrects
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">SE
+                    CONNECTER</button>
+            </form>
+
+            <div class="auth-links">
+                <p>Nouveau membre ? <a href="register.html">Créer un compte</a></p>
+                <p style="margin-top: 15px;"><a href="admin/login.html" style="color: #666;">Accès Admin</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const phone = document.getElementById('phone').value;
+            const errorDiv = document.getElementById('login-error');
+            const btn = this.querySelector('button[type="submit"]');
+
+            if (phone.length < 10) {
+                errorDiv.textContent = "Numéro de téléphone invalide";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            errorDiv.style.display = 'none';
+            btn.textContent = "VERIFICATION...";
+            btn.disabled = true;
+
+            try {
+                if (!window.supabaseClient) {
+                    throw new Error("Erreur de connexion serveur");
+                }
+
+                const { data, error } = await window.supabaseClient
+                    .from('joueurs')
+                    .select('whatsapp, pseudo')
+                    .eq('whatsapp', phone)
+                    .single();
+
+                if (error || !data) {
+                    throw new Error("Ce numéro n'est pas enregistré.");
+                }
+
+                // Setup local session
+                localStorage.setItem('flamme_user', JSON.stringify({
+                    whatsapp: data.whatsapp,
+                    pseudo: data.pseudo
+                }));
+
+                window.location.href = 'profil.html';
+
+            } catch (err) {
+                console.error(err);
+                errorDiv.textContent = err.message || "Erreur de connexion";
+                errorDiv.style.display = 'block';
+                btn.textContent = "SE CONNECTER";
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

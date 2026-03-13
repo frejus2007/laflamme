@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournois - La Flamme 🔥</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background-color: #000;
+        }
+
+        .coming-soon-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            /* minus navbar approximately */
+            text-align: center;
+        }
+
+        .coming-soon-title {
+            font-size: 3rem;
+            color: var(--flame-orange);
+            text-shadow: var(--glow-orange);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .coming-soon-text {
+            font-size: 1.2rem;
+            color: #aaa;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .fire-icon {
+            font-size: 5rem;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px rgba(255, 115, 0, 0.4));
+            }
+
+            100% {
+                transform: scale(1.1);
+                filter: drop-shadow(0 0 30px rgba(255, 115, 0, 1));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="embers-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">🔥 LA FLAMME</a>
+        <div class="menu-toggle" id="mobile-menu"><span></span><span></span><span></span></div>
+        <div class="nav-links">
+            <a href="index.html">ACCUEIL</a>
+            <a href="classement.html">CLASSEMENT</a>
+            <a href="profil.html">PROFIL</a>
+            <a href="regles.html">RÈGLES</a>
+            <a href="tournois.html" class="active">TOURNOIS</a>
+            <a href="connexion.html" class="btn btn-outline btn-small" style="margin-left: 20px;">CONNEXION</a>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top: 40px;">
+        <h1 style="text-align: center; color: var(--flame-orange); text-shadow: var(--glow-orange); margin-bottom: 20px;"
+            class="orbitron">TOURNOIS OFFICIELS</h1>
+        <p style="text-align: center; color: #aaa; margin-bottom: 40px;">Participez aux tournois internes et affrontez
+            d'autres clans !</p>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h3 class="panel-title" style="color: var(--flame-yellow);">🔥 Tournoi d'Hiver - Saison 1</h3>
+            </div>
+            <div style="padding: 20px;">
+                <p><strong>Mode :</strong> Battle Royale (Squad)</p>
+                <p><strong>Date :</strong> 25 Mars 2026</p>
+                <p><strong>Récompense :</strong> Titre exclusif In-Game + 500 points au classement</p>
+                <p style="margin-top: 15px; color: #33ff33;">Statut : Inscriptions Ouvertes</p>
+                <button class="btn" style="margin-top: 20px;">S'INSCRIRE AVEC SA SQUAD</button>
+            </div>
+        </div>
+
+        <div class="panel" style="margin-top: 30px; opacity: 0.7;">
+            <div class="panel-header">
+                <h3 class="panel-title" style="color: #aaa;">❄️ Tournoi MJ - 1v1 Sniper</h3>
+            </div>
+            <div style="padding: 20px;">
+                <p><strong>Mode :</strong> Multijoueur (1v1)</p>
+                <p><strong>Date :</strong> 10 Février 2026</p>
+                <p><strong>Vainqueur :</strong> ƑL丨Ghost</p>
+                <p style="margin-top: 15px; color: #ff3333;">Statut : Terminé</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
