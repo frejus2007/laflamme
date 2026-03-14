@@ -86,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (menuToggle) {
         menuToggle.addEventListener('click', () => {
             navLinks.classList.toggle('show');
+            menuToggle.classList.toggle('active');
         });
     }
 

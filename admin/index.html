@@ -133,6 +133,55 @@
             color: #33ff33;
             display: none;
         }
+
+        @media (max-width: 768px) {
+            .admin-layout {
+                flex-direction: column;
+            }
+            .admin-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 2px solid var(--flame-orange);
+                padding: 10px 0;
+            }
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .sidebar-menu li {
+                flex: 1 1 auto;
+                min-width: 120px;
+            }
+            .sidebar-menu a {
+                padding: 10px;
+                text-align: center;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+            .sidebar-menu a:hover,
+            .sidebar-menu a.active {
+                border-left: none;
+                border-bottom-color: var(--flame-orange);
+            }
+            .admin-content {
+                padding: 20px 10px;
+            }
+            .match-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .admin-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            .admin-card {
+                padding: 15px;
+            }
+            .sidebar-brand {
+                margin-bottom: 15px;
+            }
+        }
     </style>
 </head>
 
