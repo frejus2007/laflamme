@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion Joueurs - Admin</title>
+    <title>Gestion Tournois - Admin</title>
     <script>
         if (!localStorage.getItem('flamme_admin')) {
             window.location.href = 'login.html';
@@ -115,106 +115,83 @@
             background: rgba(255, 115, 0, 0.05);
         }
 
-        .action-flex {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-start;
-        }
-
-        .btn-action {
+        .btn-delete {
+            background: rgba(255, 51, 51, 0.2);
+            color: #ff3333;
+            border: 1px solid #ff3333;
             padding: 8px 12px;
             font-size: 0.75rem;
             cursor: pointer;
-            border: 1px solid transparent;
             border-radius: 4px;
-            color: white;
             font-weight: bold;
             text-transform: uppercase;
             transition: 0.3s;
         }
 
-        .btn-penalize {
-            background: rgba(204, 170, 0, 0.2);
-            color: #ffcc00;
-            border-color: #ffcc00;
-        }
-        .btn-penalize:hover {
-            background: #ffcc00;
-            color: #000;
-            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
-        }
-
-        .btn-delete {
-            background: rgba(255, 51, 51, 0.2);
-            color: #ff3333;
-            border-color: #ff3333;
-        }
         .btn-delete:hover {
             background: #ff3333;
             color: #fff;
             box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
         }
 
-        .player-avatar-small {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #333;
-            border: 1px solid var(--flame-orange);
-            object-fit: cover;
-        }
-
-        .player-info-cell {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
 
         @media (max-width: 768px) {
             .admin-layout {
                 flex-direction: column;
             }
+
             .admin-sidebar {
                 width: 100%;
                 border-right: none;
                 border-bottom: 2px solid var(--flame-orange);
                 padding: 10px 0;
             }
+
             .sidebar-menu {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
             }
+
             .sidebar-menu li {
                 flex: 1 1 auto;
                 min-width: 120px;
             }
+
             .sidebar-menu a {
                 padding: 10px;
                 text-align: center;
                 border-left: none;
                 border-bottom: 3px solid transparent;
             }
+
             .sidebar-menu a:hover,
             .sidebar-menu a.active {
                 border-left: none;
                 border-bottom-color: var(--flame-orange);
             }
+
             .admin-content {
                 padding: 20px 10px;
             }
+
             .admin-header {
                 flex-direction: column;
                 text-align: center;
                 gap: 15px;
             }
+
             .admin-card {
                 padding: 15px;
             }
-            .sidebar-brand {
-                margin-bottom: 15px;
+            .form-grid-2 {
+                grid-template-columns: 1fr;
             }
-            /* Table responsiveness is handled by .table-responsive wrapping the table */
         }
     </style>
 </head>
@@ -226,9 +203,9 @@
             <a href="index.html" class="sidebar-brand">🔥 ADMIN</a>
             <ul class="sidebar-menu">
                 <li><a href="index.html">Ajouter un Match</a></li>
-                <li><a href="joueurs.html" class="active">Gestion Joueurs</a></li>
+                <li><a href="joueurs.html">Gestion Joueurs</a></li>
                 <li><a href="saisons.html">Gestion Saisons</a></li>
-                <li><a href="tournois.html">Gestion Tournois</a></li>
+                <li><a href="tournois.html" class="active">Gestion Tournois</a></li>
             </ul>
             <div style="margin-top: auto; padding: 20px;">
                 <button onclick="logoutAdmin()" class="btn btn-outline"
@@ -239,25 +216,71 @@
         <!-- Main Content -->
         <main class="admin-content">
             <div class="admin-header">
-                <h1>Gestion des Joueurs</h1>
+                <h1>Gestion des Tournois</h1>
             </div>
 
+            <!-- Create Tournament Form -->
             <div class="admin-card">
+                <h2 style="color: var(--flame-yellow); margin-bottom: 25px; font-size: 1.5rem; border-bottom: 1px solid #333; padding-bottom: 10px;">Créer un Tournoi</h2>
+                <form id="create-tournoi-form">
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Nom du Tournoi</label>
+                            <input type="text" id="t-nom" class="form-control" placeholder="Ex: Tournoi BR Duos" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mode</label>
+                            <input type="text" id="t-mode" class="form-control" placeholder="Ex: Battle Royale (Duos)" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label>Date du Tournoi</label>
+                            <input type="date" id="t-date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Statut</label>
+                            <select id="t-statut" class="form-control" required>
+                                <option value="Ouvert">Ouvert</option>
+                                <option value="En Cours">En Cours</option>
+                                <option value="Terminé">Terminé</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description (Optionnelle)</label>
+                        <textarea id="t-desc" class="form-control" rows="2" placeholder="Brève description..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Récompense (Optionnelle)</label>
+                        <input type="text" id="t-recompense" class="form-control" placeholder="Ex: Titre exclusif">
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">CRÉER LE TOURNOI</button>
+                    <div id="tournoi-msg" style="margin-top: 15px; text-align: center; display: none;"></div>
+                </form>
+            </div>
+
+            <!-- Tournaments List -->
+            <div class="admin-card">
+                <h2 style="color: var(--flame-yellow); margin-bottom: 25px; font-size: 1.5rem; border-bottom: 1px solid #333; padding-bottom: 10px;">Liste des Tournois</h2>
                 <div class="table-responsive">
                     <table class="gaming-table admin-table" style="font-size: 0.9rem;">
                         <thead>
                             <tr>
-                                <th>Joueur / Pseudo</th>
-                                <th>WhatsApp</th>
-                                <th>Spécialité</th>
-                                <th>Points</th>
-                                <th>Actions Admin</th>
+                                <th>Nom</th>
+                                <th>Mode</th>
+                                <th>Date</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="admin-players-body">
-                            <!-- Players loaded dynamically -->
+                        <tbody id="admin-tournois-body">
                             <tr>
-                                <td colspan="5" style="text-align:center;">Chargement des joueurs...</td>
+                                <td colspan="5" style="text-align:center;">Chargement des tournois...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -265,6 +288,7 @@
             </div>
         </main>
     </div>
+
     <script>
         function logoutAdmin() {
             localStorage.removeItem('flamme_admin');
@@ -275,69 +299,50 @@
     <script src="../js/main.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            const tbody = document.getElementById('admin-players-body');
+            const tbody = document.getElementById('admin-tournois-body');
+            const formObj = document.getElementById('create-tournoi-form');
+            const msg = document.getElementById('tournoi-msg');
 
-            async function loadPlayers() {
+            async function loadTournois() {
                 try {
                     if (!window.supabaseClient) throw new Error("Supabase non initialisé");
 
                     const { data, error } = await window.supabaseClient
-                        .from('joueurs')
+                        .from('tournois')
                         .select('*')
-                        .order('points', { ascending: false });
+                        .order('date_tournoi', { ascending: false });
 
                     if (error) throw error;
 
                     tbody.innerHTML = '';
                     if (!data || data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucun joueur trouvé</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucun tournoi trouvé</td></tr>';
                         return;
                     }
 
-                    data.forEach(p => {
-                        const defaultAvatar = 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Ghost&backgroundColor=000000';
-                        const avatarUrl = p.avatar ? p.avatar : defaultAvatar;
-
+                    data.forEach(t => {
+                        let statusColor = t.statut === 'Ouvert' ? '#33ff33' : (t.statut === 'Terminé' ? '#ff3333' : '#aaa');
+                        
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
+                            <td><strong style="color: #fff;">${t.nom}</strong></td>
+                            <td style="color: #aaa;">${t.mode}</td>
+                            <td>${new Date(t.date_tournoi).toLocaleDateString('fr-FR')}</td>
+                            <td><span style="color: ${statusColor};">${t.statut}</span></td>
                             <td>
-                                <div class="player-info-cell">
-                                    <img src="${avatarUrl}" alt="Avatar" class="player-avatar-small">
-                                    <strong class="orbitron" style="color: #fff;">${p.pseudo}</strong>
-                                </div>
-                            </td>
-                            <td style="color: #aaa;">${p.whatsapp}</td>
-                            <td><span style="background: #222; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">${p.specialite}</span></td>
-                            <td><strong style="color: var(--flame-orange); font-size: 1.1rem; font-family: 'Orbitron', sans-serif;">${p.points}</strong></td>
-                            <td>
-                                <div class="action-flex">
-                                    <button class="btn-action btn-penalize" data-id="${p.id}" data-points="${p.points}" title="-20 pts changement spé">Changer Spé (-20)</button>
-                                    <button class="btn-action btn-delete" data-id="${p.id}">Exclure</button>
-                                </div>
+                                <button class="btn-delete" data-id="${t.id}">Supprimer</button>
                             </td>
                         `;
                         tbody.appendChild(tr);
                     });
 
-                    // Attach events
+                    // Attach delete events
                     document.querySelectorAll('.btn-delete').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
-                            if (confirm("Supprimer ce joueur ?")) {
+                            if (confirm("Supprimer ce tournoi définitivement ?")) {
                                 const id = e.target.getAttribute('data-id');
-                                await window.supabaseClient.from('joueurs').delete().eq('id', id);
-                                loadPlayers();
-                            }
-                        });
-                    });
-
-                    document.querySelectorAll('.btn-penalize').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            if (confirm("Appliquer -20 points pour changement de spécialité ?")) {
-                                const id = e.target.getAttribute('data-id');
-                                const currentPts = parseInt(e.target.getAttribute('data-points'));
-                                const newPts = (currentPts - 20).toString();
-                                await window.supabaseClient.from('joueurs').update({ points: newPts }).eq('id', id);
-                                loadPlayers();
+                                await window.supabaseClient.from('tournois').delete().eq('id', id);
+                                loadTournois(); // Reload list
                             }
                         });
                     });
@@ -348,7 +353,55 @@
                 }
             }
 
-            loadPlayers();
+            // Load on init
+            loadTournois();
+
+            // Submit new tournoi
+            formObj.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const nom = document.getElementById('t-nom').value;
+                const mode = document.getElementById('t-mode').value;
+                const dateT = document.getElementById('t-date').value;
+                const statut = document.getElementById('t-statut').value;
+                const desc = document.getElementById('t-desc').value;
+                const recompense = document.getElementById('t-recompense').value;
+                const btn = e.target.querySelector('button[type="submit"]');
+
+                try {
+                    btn.disabled = true;
+                    btn.textContent = "CRÉATION EN COURS...";
+                    msg.style.display = "none";
+
+                    const { error } = await window.supabaseClient.from('tournois').insert([{
+                        nom: nom,
+                        mode: mode,
+                        date_tournoi: dateT,
+                        statut: statut,
+                        description: desc,
+                        recompense: recompense
+                    }]);
+
+                    if (error) throw error;
+
+                    msg.textContent = "Tournoi créé avec succès !";
+                    msg.style.color = "#33ff33";
+                    msg.style.display = "block";
+                    formObj.reset();
+                    
+                    // Reload list
+                    loadTournois();
+
+                } catch (err) {
+                    console.error("Erreur création", err);
+                    msg.textContent = "Erreur lors de la création du tournoi.";
+                    msg.style.color = "#ff3333";
+                    msg.style.display = "block";
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = "CRÉER LE TOURNOI";
+                }
+            });
         });
     </script>
 </body>

@@ -95,6 +95,3 @@ INSERT INTO saisons (id, nom, date_debut, date_fin, est_active) VALUES ('c8e1041
 
 -- Insert default admin
 INSERT INTO admins (identifiant, mot_de_passe) VALUES ('admin', 'flamme2026') ON CONFLICT DO NOTHING;
-
--- Insert default tournoi
-INSERT INTO tournois (nom, mode, date_tournoi, statut, description, recompense) VALUES ('Tournoi d''Hiver - Saison 1', 'Battle Royale (Squad)', '2026-03-25', 'Ouvert', 'Participez aux tournois internes et affrontez d''autres clans !', 'Titre exclusif In-Game + 500 points au classement') ON CONFLICT DO NOTHING;
