@@ -183,6 +183,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const player = allPlayers.find(p => p.id === playerId);
                 if (!player) throw new Error("Joueur non trouvé");
 
+                // Get Active Season ID
+                const { data: seasonData, error: seasonError } = await window.supabaseClient
+                    .from('saisons')
+                    .select('id')
+                    .eq('est_active', true)
+                    .limit(1);
+                    
+                if (seasonError || !seasonData || seasonData.length === 0) {
+                    throw new Error("Aucune saison n'est actuellement active. Veuillez créer une saison dans l'onglet 'Gestion Saisons' avant d'ajouter des matchs.");
+                }
+                const activeSeasonId = seasonData[0].id;
+
                 const newPointsStr = (parseInt(player.points) + pointsToAdd).toString();
                 const newKillsStr = (parseInt(player.kills) + kills).toString();
                 const recordPointsStr = pointsToAdd > parseInt(player.record_points) ? pointsToAdd.toString() : player.record_points;
@@ -193,7 +205,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // Begin Database transaction via two calls
                 const { error: matchError } = await window.supabaseClient.from('matchs').insert([{
                     joueur_id: playerId,
-                    saison_id: "c8e10419-f55a-46da-b7a4-31ea6737f000", // Hardcoded season ID from setup_supabase.sql for now
+                    saison_id: activeSeasonId,
                     mode: mode,
                     resultat: (mode === 'MJ' && document.querySelector('input[name="mj-team"]:checked').value === 'win') ? 'win' : 'loss',
                     points_gagnes: pointsToAdd,

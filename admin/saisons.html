@@ -138,6 +138,56 @@
             .sidebar-brand {
                 margin-bottom: 15px;
             }
+            .admin-table {
+                font-size: 0.8rem;
+            }
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 12px;
+            background: #222;
+            color: var(--flame-yellow);
+            border-bottom: 2px solid #444;
+        }
+
+        .admin-table td {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+            color: #ccc;
+        }
+
+        .btn-action {
+            padding: 5px 10px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            margin-right: 5px;
+        }
+
+        .btn-danger {
+            background: rgba(255, 51, 51, 0.2);
+            color: #ff3333;
+            border-color: #ff3333;
+        }
+
+        .btn-warning {
+            background: rgba(255, 170, 0, 0.2);
+            color: #ffaa00;
+            border-color: #ffaa00;
+        }
+
+        .btn-success {
+            background: rgba(51, 255, 51, 0.2);
+            color: #33ff33;
+            border-color: #33ff33;
         }
     </style>
 </head>
@@ -195,6 +245,28 @@
                     <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">LANCER NOUVELLE SAISON</button>
                     <div id="season-msg" style="margin-top: 15px; text-align: center; display: none;"></div>
                 </form>
+            </div>
+
+            <div class="admin-card" style="max-width: 900px;">
+                <h3 style="color: var(--flame-yellow); margin-bottom: 20px; font-size: 1.5rem; border-bottom: 1px solid #333; padding-bottom: 10px;">Liste des Saisons</h3>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table" id="seasons-table">
+                        <thead>
+                            <tr>
+                                <th>Nom de la Saison</th>
+                                <th>Début</th>
+                                <th>Fin</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="seasons-tbody">
+                            <tr>
+                                <td colspan="5" style="text-align: center;">Chargement des saisons...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>
@@ -328,6 +400,123 @@
                     }
                 }
             });
+
+            // --- Load All Seasons ---
+            async function loadAllSeasons() {
+                const tbody = document.getElementById('seasons-tbody');
+                try {
+                    const { data, error } = await window.supabaseClient
+                        .from('saisons')
+                        .select('*')
+                        .order('date_debut', { ascending: false });
+
+                    if (error) throw error;
+                    
+                    tbody.innerHTML = '';
+                    if (!data || data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Aucune saison créée.</td></tr>';
+                        return;
+                    }
+
+                    data.forEach(s => {
+                        const tr = document.createElement('tr');
+                        const statusColor = s.est_active ? '#33ff33' : '#666';
+                        const statusText = s.est_active ? 'Active' : 'Terminée';
+                        
+                        tr.innerHTML = `
+                            <td><strong style="color: #fff;">${s.nom}</strong></td>
+                            <td>${new Date(s.date_debut).toLocaleDateString('fr-FR')}</td>
+                            <td>${new Date(s.date_fin).toLocaleDateString('fr-FR')}</td>
+                            <td style="color: ${statusColor}; font-weight: bold;">${statusText}</td>
+                            <td>
+                                ${!s.est_active ? `<button class="btn-action btn-success btn-activate" data-id="${s.id}" title="Rendre cette saison active">Activer</button>` : ''}
+                                <button class="btn-action btn-warning btn-edit" data-id="${s.id}" data-nom="${s.nom}" data-start="${s.date_debut}" data-end="${s.date_fin}" title="Modifier">✏️</button>
+                                <button class="btn-action btn-danger btn-delete" data-id="${s.id}" title="Supprimer">🗑️</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    attachActions();
+
+                } catch (err) {
+                    console.error('Failed to load all seasons:', err);
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Erreur de chargement des saisons.</td></tr>';
+                }
+            }
+
+            loadAllSeasons();
+
+            function attachActions() {
+                // Delete
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.target.getAttribute('data-id');
+                        if (confirm("Voulez-vous vraiment supprimer cette saison ? Cela impactera les matchs qui y sont liés (ils n'auront plus de saison attribuée).")) {
+                            await window.supabaseClient.from('saisons').delete().eq('id', id);
+                            loadCurrentSeason();
+                            loadAllSeasons();
+                        }
+                    });
+                });
+
+                // Activate
+                document.querySelectorAll('.btn-activate').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.target.getAttribute('data-id');
+                        if (confirm("Voulez-vous définir cette saison comme la saison active ? Cela terminera l'autre saison en cours.")) {
+                            // Deactivate all
+                            await window.supabaseClient.from('saisons').update({ est_active: false }).eq('est_active', true);
+                            // Activate target
+                            await window.supabaseClient.from('saisons').update({ est_active: true }).eq('id', id);
+                            
+                            loadCurrentSeason();
+                            loadAllSeasons();
+                        }
+                    });
+                });
+
+                // Edit Logic (Simple prompt for ease of use without complex modals)
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.target.getAttribute('data-id');
+                        const oldNom = e.target.getAttribute('data-nom');
+                        const oldStart = e.target.getAttribute('data-start');
+                        const oldEnd = e.target.getAttribute('data-end');
+
+                        const newNom = prompt("Nouveau nom de la saison :", oldNom);
+                        if (newNom === null) return; // Cancelled
+                        
+                        const newStart = prompt("Nouvelle date de début (YYYY-MM-DD) :", oldStart);
+                        if (newStart === null) return;
+                        
+                        const newEnd = prompt("Nouvelle date de fin (YYYY-MM-DD) :", oldEnd);
+                        if (newEnd === null) return;
+
+                        if (new Date(newStart) >= new Date(newEnd)) {
+                            alert("La date de fin doit être après la date de début.");
+                            return;
+                        }
+
+                        try {
+                            const { error } = await window.supabaseClient.from('saisons').update({
+                                nom: newNom,
+                                date_debut: newStart,
+                                date_fin: newEnd
+                            }).eq('id', id);
+                            
+                            if (error) throw error;
+                            
+                            loadCurrentSeason();
+                            loadAllSeasons();
+                            
+                        } catch(err) {
+                            console.error(err);
+                            alert("Erreur lors de la modification de la saison.");
+                        }
+                    });
+                });
+            }
         });
     </script>
 </body>
