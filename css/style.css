@@ -328,6 +328,7 @@ footer p {
         top: 80px;
         left: 0;
         width: 100%;
+        height: auto;
         background: var(--bg-darker);
         flex-direction: column;
         border-bottom: 0px solid var(--flame-orange);

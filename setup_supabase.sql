@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS joueurs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     whatsapp TEXT UNIQUE NOT NULL, -- On l'utilise comme identifiant de connexion
     pseudo TEXT UNIQUE NOT NULL, -- ex: ƑL丨Ghost
+    mot_de_passe TEXT NOT NULL,
     prenom TEXT NOT NULL,
     specialite TEXT NOT NULL CHECK (specialite IN ('MJ', 'BR')),
     avatar TEXT NOT NULL,

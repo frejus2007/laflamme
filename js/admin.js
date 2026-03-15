@@ -24,33 +24,30 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (error) throw error;
             allPlayers = data || [];
 
-            // Populate select
+            // Populate initial state will be handled by filterPlayers
+        } catch (err) {
+            console.error(err);
+            playerSelect.innerHTML = '<option value="" disabled selected>Erreur chargement joueurs</option>';
+        }
+
+        // Auto-filter players robustly by rebuilding the options
+        const filterPlayers = () => {
+            const mode = modeSelect.value;
             playerSelect.innerHTML = '<option value="" disabled selected>Choisir un joueur...</option>';
+            
             allPlayers.forEach(p => {
+                // If mode is selected, filter. If not, don't show or show all (let's filter if mode is selected)
+                if (mode && p.specialite !== mode) return;
+                
                 const opt = document.createElement('option');
                 opt.value = p.id;
                 opt.textContent = `${p.pseudo} (${p.specialite})`;
                 opt.dataset.spec = p.specialite;
                 playerSelect.appendChild(opt);
             });
-
-        } catch (err) {
-            console.error(err);
-            playerSelect.innerHTML = '<option value="" disabled selected>Erreur chargement joueurs</option>';
-        }
-
-        // Auto-filter players initially
-        const filterPlayers = () => {
-            const mode = modeSelect.value;
-            Array.from(playerSelect.options).forEach(opt => {
-                if (opt.value === "") return;
-                if (opt.dataset.spec === mode) {
-                    opt.style.display = 'block';
-                } else {
-                    opt.style.display = 'none';
-                }
-            });
+            
             playerSelect.value = ""; // reset selection
+            document.getElementById('match-player-spec').value = ""; // reset spec field
         };
 
         // Timeout to run initial filter after options are populated
@@ -65,6 +62,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 brPlayersGroup.style.display = 'block';
             }
             filterPlayers();
+        });
+
+        // Update visual readonly field when player is picked
+        playerSelect.addEventListener('change', (e) => {
+            const selectedOpt = playerSelect.options[playerSelect.selectedIndex];
+            if (selectedOpt && selectedOpt.dataset.spec) {
+                document.getElementById('match-player-spec').value = selectedOpt.dataset.spec;
+            }
         });
 
         // Compute grades helper

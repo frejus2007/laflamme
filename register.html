@@ -147,6 +147,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" class="form-control" placeholder="Votre mot de passe" required>
+                </div>
+
+                <div class="form-group">
                     <label for="pseudo">Pseudo In-Game (Doit commencer par ƑL丨)</label>
                     <input type="text" id="pseudo" class="form-control" value="ƑL丨" required>
                     <div id="pseudo-error" class="error-message">Le pseudo doit toujours commencer par ƑL丨</div>
@@ -210,6 +215,7 @@
             const pseudo = pseudoInput.value;
             const prenom = document.getElementById('prenom').value;
             const whatsapp = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
             const specialite = document.getElementById('specialite').value;
             const avatarValue = document.querySelector('input[name="avatar"]:checked').value;
 
@@ -241,6 +247,7 @@
                             pseudo: pseudo,
                             prenom: prenom,
                             whatsapp: whatsapp,
+                            mot_de_passe: password,
                             specialite: specialite,
                             avatar: avatarUrl
                         }

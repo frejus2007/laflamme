@@ -215,8 +215,16 @@
                         <!-- Mode du Match -->
                         <div class="form-group">
                             <label>Mode de Jeu</label>
-                            <label><input type="radio" name="mj-team" value="win" checked> Gagnante</label>
-                            <label><input type="radio" name="mj-team" value="loss"> Perdante</label>
+                            <select id="match-mode" class="form-control" style="margin-bottom: 10px;" required>
+                                <option value="" disabled selected>Choisir le mode</option>
+                                <option value="MJ">Multijoueur (MJ)</option>
+                                <option value="BR">Battle Royale (BR)</option>
+                            </select>
+                            
+                            <div id="mj-team-group" style="display: none;">
+                                <label><input type="radio" name="mj-team" value="win" checked> Gagnante</label>
+                                <label><input type="radio" name="mj-team" value="loss"> Perdante</label>
+                            </div>
                         </div>
                     </div>
 
@@ -229,7 +237,7 @@
                     <div class="match-form-grid">
                         <div class="form-group">
                             <label>Joueur (Pseudo)</label>
-                            <select id="match-player" class="form-control" required disabled>
+                            <select id="match-player" class="form-control" required>
                                 <option value="" disabled selected>Chargement des joueurs...</option>
                             </select>
                         </div>
@@ -288,6 +296,7 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/main.js"></script>
     <script src="../js/admin.js"></script>
 </body>
 

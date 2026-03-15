@@ -363,15 +363,37 @@
                 document.getElementById('prof-record-kills').textContent = data.record_kills;
                 document.getElementById('prof-record-points').textContent = data.record_points;
 
-                // Grade logic calculation (Simplified example based on points)
-                const grades = ['Recrue', 'Soldat', 'Sergent', 'Lieutenant', 'Commandant', 'Général'];
-                let currentGradeIndex = grades.indexOf(data.grade);
-                if (currentGradeIndex === -1) currentGradeIndex = 0;
+                // Grade logic calculation based on points
+                const gradeThresholds = [
+                    { name: 'Recrue', points: 0 },
+                    { name: 'Soldat', points: 120 },
+                    { name: 'Sergent', points: 300 },
+                    { name: 'Lieutenant', points: 600 },
+                    { name: 'Commandant', points: 950 },
+                    { name: 'Général', points: 1400 }
+                ];
+                
+                const userPoints = data.points || 0;
+                let currentGradeIndex = 0;
+                
+                // Find current grade index
+                for (let i = 0; i < gradeThresholds.length; i++) {
+                    if (userPoints >= gradeThresholds[i].points) {
+                        currentGradeIndex = i;
+                    }
+                }
 
-                const nextGradeIndex = Math.min(currentGradeIndex + 1, grades.length - 1);
+                const nextGradeIndex = Math.min(currentGradeIndex + 1, gradeThresholds.length - 1);
+                const currentGradeText = gradeThresholds[currentGradeIndex].name;
+                const nextGradeText = gradeThresholds[nextGradeIndex].name;
 
-                document.getElementById('current-grade-text').textContent = grades[currentGradeIndex];
-                document.getElementById('next-grade-text').textContent = grades[nextGradeIndex];
+                document.getElementById('current-grade-text').textContent = currentGradeText;
+                
+                if (currentGradeIndex === gradeThresholds.length - 1) {
+                    document.getElementById('next-grade-text').textContent = "MAX";
+                } else {
+                    document.getElementById('next-grade-text').textContent = `${nextGradeText} (${gradeThresholds[nextGradeIndex].points} pts)`;
+                }
 
                 // Update visual path
                 const gradeSpans = document.querySelectorAll('.grade-path span');
@@ -383,8 +405,19 @@
                     }
                 });
 
-                // Set fake progress percentage
-                const progressPercent = currentGradeIndex === grades.length - 1 ? 100 : 50;
+                // Calculate actual progress percentage
+                let progressPercent = 100;
+                if (currentGradeIndex < gradeThresholds.length - 1) {
+                    const currentTierPoints = gradeThresholds[currentGradeIndex].points;
+                    const nextTierPoints = gradeThresholds[nextGradeIndex].points;
+                    
+                    const pointsInTier = userPoints - currentTierPoints;
+                    const tierTotalPoints = nextTierPoints - currentTierPoints;
+                    
+                    progressPercent = (pointsInTier / tierTotalPoints) * 100;
+                    progressPercent = Math.max(0, Math.min(100, progressPercent)); // Clamp
+                }
+
                 document.getElementById('grade-progress-bar').style.width = `${progressPercent}%`;
 
             } catch (err) {
