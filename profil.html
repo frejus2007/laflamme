@@ -266,7 +266,19 @@
                 <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Ghost&backgroundColor=000000"
                     alt="Avatar" class="profile-avatar" id="prof-avatar">
                 <div class="profile-info">
-                    <h2 id="prof-pseudo">ƑL丨Ghost</h2>
+                    <div style="display:flex; align-items:center;">
+                        <h2 id="prof-pseudo">ƑL丨Ghost</h2>
+                        <button id="btn-edit-pseudo" class="btn btn-outline btn-small" style="font-size: 0.8rem; padding: 4px 8px; margin-left: 15px; border-color: rgba(255, 255, 255, 0.3); color: #ccc;">✏️ Modifier</button>
+                    </div>
+                    <div id="edit-pseudo-container" style="display: none; margin-top: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; border: 1px dashed var(--flame-orange);">
+                        <label for="new-pseudo" style="display:block; margin-bottom: 8px; color: #fff; font-size: 0.85rem;">Nouveau Pseudo (Doit commencer par ƑL丨)</label>
+                        <div style="display:flex; gap: 10px;">
+                            <input type="text" id="new-pseudo" class="form-control" value="ƑL丨" style="flex:1;">
+                            <button id="btn-save-pseudo" class="btn btn-small" style="padding: 5px 15px;">OK</button>
+                            <button id="btn-cancel-pseudo" class="btn btn-outline btn-small" style="padding: 5px 15px; border-color: #666; color: #ccc;">Annuler</button>
+                        </div>
+                        <div id="edit-pseudo-error" class="error-message" style="display:none; margin-top: 5px; font-size: 0.8rem;">Erreur</div>
+                    </div>
                     <div class="subtitle" id="prof-prenom">John Doe</div>
                     <div>
                         <span class="badge" id="prof-spec">Spécialité: MJ</span>
@@ -423,6 +435,84 @@
             } catch (err) {
                 console.error("Erreur chargement profil", err);
             }
+
+            // --- Edit Pseudo Logic ---
+            const btnEdit = document.getElementById('btn-edit-pseudo');
+            const editContainer = document.getElementById('edit-pseudo-container');
+            const btnSave = document.getElementById('btn-save-pseudo');
+            const btnCancel = document.getElementById('btn-cancel-pseudo');
+            const inputNewPseudo = document.getElementById('new-pseudo');
+            const pseudoError = document.getElementById('edit-pseudo-error');
+
+            btnEdit.addEventListener('click', () => {
+                editContainer.style.display = 'block';
+                inputNewPseudo.value = document.getElementById('prof-pseudo').textContent;
+                if (!inputNewPseudo.value.startsWith('ƑL丨')) {
+                    inputNewPseudo.value = 'ƑL丨';
+                }
+            });
+
+            btnCancel.addEventListener('click', () => {
+                editContainer.style.display = 'none';
+                pseudoError.style.display = 'none';
+            });
+
+            // Keep suffix undeletable logic
+            inputNewPseudo.addEventListener('keydown', function (e) {
+                if (this.selectionStart < 3 && (e.key === 'Backspace' || e.key === 'Delete')) {
+                    e.preventDefault();
+                }
+            });
+
+            btnSave.addEventListener('click', async () => {
+                const newPseudo = inputNewPseudo.value.trim();
+                pseudoError.style.display = 'none';
+
+                if (!newPseudo.startsWith('ƑL丨')) {
+                    pseudoError.textContent = "Le pseudo doit commencer par ƑL丨";
+                    pseudoError.style.display = 'block';
+                    return;
+                }
+
+                if (newPseudo.length < 5) {
+                    pseudoError.textContent = "Pseudo trop court.";
+                    pseudoError.style.display = 'block';
+                    return;
+                }
+
+                btnSave.textContent = "...";
+                btnSave.disabled = true;
+
+                try {
+                    const { error } = await window.supabaseClient
+                        .from('joueurs')
+                        .update({ pseudo: newPseudo })
+                        .eq('whatsapp', userSession.whatsapp);
+
+                    if (error) {
+                        if (error.code === '23505') {
+                            throw new Error("Ce pseudo est déjà pris.");
+                        }
+                        throw error;
+                    }
+
+                    // Update UI and Local Storage
+                    document.getElementById('prof-pseudo').textContent = newPseudo;
+                    userSession.pseudo = newPseudo;
+                    localStorage.setItem('flamme_user', JSON.stringify(userSession));
+                    
+                    editContainer.style.display = 'none';
+                    alert("Pseudo mis à jour avec succès !");
+
+                } catch (err) {
+                    console.error("Erreur de mise à jour pseudo:", err);
+                    pseudoError.textContent = err.message || "Erreur lors de la modification.";
+                    pseudoError.style.display = 'block';
+                } finally {
+                    btnSave.textContent = "OK";
+                    btnSave.disabled = false;
+                }
+            });
 
             // Logout Logic
             const logout = (e) => {
