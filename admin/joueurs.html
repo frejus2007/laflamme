@@ -330,14 +330,49 @@
                         });
                     });
 
+                    // Helper to compute grade
+                    const computeGrade = (points) => {
+                        if (points >= 1400) return 'Général';
+                        if (points >= 950) return 'Commandant';
+                        if (points >= 600) return 'Lieutenant';
+                        if (points >= 300) return 'Sergent';
+                        if (points >= 120) return 'Soldat';
+                        return 'Recrue';
+                    };
+
                     document.querySelectorAll('.btn-penalize').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
-                            if (confirm("Appliquer -20 points pour changement de spécialité ?")) {
+                            const currentSpec = e.target.closest('tr').querySelector('td:nth-child(3) span').textContent;
+                            const newSpecInput = prompt(`Nouvelle spécialité (saisissez 'BR' ou 'MJ'). Actuelle: ${currentSpec} :`);
+                            if (!newSpecInput) return;
+                            const newSpec = newSpecInput.toUpperCase();
+                            if (newSpec !== 'BR' && newSpec !== 'MJ') {
+                                alert("Spécialité invalide. L'opération est annulée.");
+                                return;
+                            }
+                            if (newSpec === currentSpec) {
+                                alert("C'est déjà sa spécialité actuelle !");
+                                return;
+                            }
+                            
+                            if (confirm(`Vous allez changer la spécialité en ${newSpec} et appliquer -20 points. Confirmer ?`)) {
                                 const id = e.target.getAttribute('data-id');
                                 const currentPts = parseInt(e.target.getAttribute('data-points'));
-                                const newPts = (currentPts - 20).toString();
-                                await window.supabaseClient.from('joueurs').update({ points: newPts }).eq('id', id);
-                                loadPlayers();
+                                const newPtsNumerical = currentPts - 20;
+                                const newPtsStr = newPtsNumerical.toString();
+                                const newGrade = computeGrade(newPtsNumerical);
+                                
+                                try {
+                                    const { error } = await window.supabaseClient.from('joueurs')
+                                        .update({ points: newPtsStr, specialite: newSpec, grade: newGrade })
+                                        .eq('id', id);
+                                    if (error) throw error;
+                                    loadPlayers();
+                                    alert("Spécialité changée avec succès. -20 points appliqués.");
+                                } catch (err) {
+                                    console.error("Erreur màj:", err);
+                                    alert("Erreur lors de la mise à jour.");
+                                }
                             }
                         });
                     });

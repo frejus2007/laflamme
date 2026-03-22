@@ -380,8 +380,8 @@
 
                             const { error } = await window.supabaseClient.from('joueurs')
                                 .update({
-                                    points: '0',
-                                    kills: '0',
+                                    points: 0,
+                                    kills: 0,
                                     grade: 'Recrue'
                                 })
                                 .neq('id', '00000000-0000-0000-0000-000000000000'); // Update all rows (Supabase requires a filter for updates without eq, so neq a fake ID)

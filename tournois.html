@@ -124,7 +124,7 @@
                     const icon = tournoi.statut === 'Terminé' ? '❄️' : '🔥';
                     const titleColor = tournoi.statut === 'Terminé' ? '#aaa' : 'var(--flame-yellow)';
                     
-                    const btnHtml = tournoi.statut === 'Ouvert' ? '<button class="btn" style="margin-top: 20px;" onclick="alert(\'Inscription via WhatsApp du Clan !\')">S\'INSCRIRE</button>' : '';
+                    const btnHtml = tournoi.statut === 'Ouvert' ? `<button class="btn btn-inscrire" data-id="${tournoi.id}" style="margin-top: 20px;">S'INSCRIRE</button>` : '';
 
                     const div = document.createElement('div');
                     div.className = 'panel';
@@ -144,6 +144,53 @@
                         </div>
                     `;
                     tournoisContainer.appendChild(div);
+                });
+
+                // Attach logic for inscriptions
+                document.querySelectorAll('.btn-inscrire').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const tournoiId = e.target.getAttribute('data-id');
+                        const sessionData = localStorage.getItem('flamme_user');
+                        if (!sessionData) {
+                            alert("Vous devez être connecté pour vous inscrire à un tournoi.");
+                            window.location.href = "connexion.html";
+                            return;
+                        }
+                        
+                        const user = JSON.parse(sessionData);
+                        btn.disabled = true;
+                        btn.textContent = "INSCRIPTION...";
+                        
+                        try {
+                            const { data: playerData, error: pError } = await window.supabaseClient.from('joueurs').select('id').eq('whatsapp', user.whatsapp).single();
+                            if (pError || !playerData) throw new Error("Erreur récupération profil.");
+                            
+                            const joueurId = playerData.id;
+                            
+                            const { error: insError } = await window.supabaseClient.from('inscriptions_tournois').insert([{
+                                tournoi_id: tournoiId,
+                                joueur_id: joueurId
+                            }]);
+                            
+                            if (insError) {
+                                if (insError.code === '23505') {
+                                    alert("Vous êtes déjà inscrit à ce tournoi !");
+                                } else {
+                                    throw insError;
+                                }
+                            } else {
+                                alert("Inscription confirmée ! Préparez-vous pour le tournoi.");
+                                btn.textContent = "INSCRIT ✔️";
+                                btn.style.background = "#33ff33";
+                                btn.style.color = "#000";
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert(err.message || "Une erreur est survenue lors de l'inscription.");
+                            btn.disabled = false;
+                            btn.textContent = "S'INSCRIRE";
+                        }
+                    });
                 });
 
             } catch (err) {

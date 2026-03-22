@@ -263,8 +263,11 @@
     <div class="container profile-container">
         <div class="id-card" id="user-profile-card">
             <div class="profile-header">
-                <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Ghost&backgroundColor=000000"
-                    alt="Avatar" class="profile-avatar" id="prof-avatar">
+                <div style="position: relative; display: inline-block;">
+                    <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Ghost&backgroundColor=000000"
+                        alt="Avatar" class="profile-avatar" id="prof-avatar">
+                    <button id="btn-edit-avatar" class="btn btn-small" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; padding: 4px; background: rgba(0,0,0,0.7); border: 1px solid var(--flame-orange); color: #fff;">Editer</button>
+                </div>
                 <div class="profile-info">
                     <div style="display:flex; align-items:center;">
                         <h2 id="prof-pseudo">ƑL丨Ghost</h2>
@@ -279,6 +282,38 @@
                         </div>
                         <div id="edit-pseudo-error" class="error-message" style="display:none; margin-top: 5px; font-size: 0.8rem;">Erreur</div>
                     </div>
+                    
+                    <div id="edit-avatar-container" style="display: none; margin-top: 10px; margin-bottom: 15px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; border: 1px dashed var(--flame-orange);">
+                        <label style="display:block; margin-bottom: 8px; color: #fff; font-size: 0.85rem;">Choisir un nouvel Avatar</label>
+                        <div class="avatar-selection" style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px;">
+                            <label style="cursor: pointer;">
+                                <input type="radio" name="new-avatar" value="avatar1" style="display:none;">
+                                <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Ghost&backgroundColor=000000" width="50" style="border-radius:50%; border: 2px solid transparent;" onclick="document.querySelectorAll('input[name=new-avatar] + img').forEach(img=>img.style.borderColor='transparent'); this.style.borderColor='var(--flame-orange)';">
+                            </label>
+                            <label style="cursor: pointer;">
+                                <input type="radio" name="new-avatar" value="avatar2" style="display:none;">
+                                <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Sniper&backgroundColor=000000" width="50" style="border-radius:50%; border: 2px solid transparent;" onclick="document.querySelectorAll('input[name=new-avatar] + img').forEach(img=>img.style.borderColor='transparent'); this.style.borderColor='var(--flame-orange)';">
+                            </label>
+                            <label style="cursor: pointer;">
+                                <input type="radio" name="new-avatar" value="avatar3" style="display:none;">
+                                <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Shadow&backgroundColor=000000" width="50" style="border-radius:50%; border: 2px solid transparent;" onclick="document.querySelectorAll('input[name=new-avatar] + img').forEach(img=>img.style.borderColor='transparent'); this.style.borderColor='var(--flame-orange)';">
+                            </label>
+                            <label style="cursor: pointer;">
+                                <input type="radio" name="new-avatar" value="avatar4" style="display:none;">
+                                <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Reaper&backgroundColor=000000" width="50" style="border-radius:50%; border: 2px solid transparent;" onclick="document.querySelectorAll('input[name=new-avatar] + img').forEach(img=>img.style.borderColor='transparent'); this.style.borderColor='var(--flame-orange)';">
+                            </label>
+                            <label style="cursor: pointer;">
+                                <input type="radio" name="new-avatar" value="avatar5" style="display:none;">
+                                <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Viper&backgroundColor=000000" width="50" style="border-radius:50%; border: 2px solid transparent;" onclick="document.querySelectorAll('input[name=new-avatar] + img').forEach(img=>img.style.borderColor='transparent'); this.style.borderColor='var(--flame-orange)';">
+                            </label>
+                        </div>
+                        <div style="display:flex; gap: 10px; margin-top: 10px;">
+                            <button id="btn-save-avatar" class="btn btn-small" style="padding: 5px 15px;">Mettre à jour</button>
+                            <button id="btn-cancel-avatar" class="btn btn-outline btn-small" style="padding: 5px 15px; border-color: #666; color: #ccc;">Annuler</button>
+                        </div>
+                        <div id="edit-avatar-error" class="error-message" style="display:none; margin-top: 5px; font-size: 0.8rem;">Erreur</div>
+                    </div>
+
                     <div class="subtitle" id="prof-prenom">John Doe</div>
                     <div>
                         <span class="badge" id="prof-spec">Spécialité: MJ</span>
@@ -435,6 +470,64 @@
             } catch (err) {
                 console.error("Erreur chargement profil", err);
             }
+
+            // --- Edit Avatar Logic ---
+            const editAvatarContainer = document.getElementById('edit-avatar-container');
+            const btnEditAvatar = document.getElementById('btn-edit-avatar');
+            const btnCancelAvatar = document.getElementById('btn-cancel-avatar');
+            const btnSaveAvatar = document.getElementById('btn-save-avatar');
+            const editAvatarError = document.getElementById('edit-avatar-error');
+
+            btnEditAvatar.addEventListener('click', () => {
+                editAvatarContainer.style.display = 'block';
+            });
+            btnCancelAvatar.addEventListener('click', () => {
+                editAvatarContainer.style.display = 'none';
+                editAvatarError.style.display = 'none';
+            });
+
+            btnSaveAvatar.addEventListener('click', async () => {
+                const selectedAvatar = document.querySelector('input[name="new-avatar"]:checked');
+                if (!selectedAvatar) {
+                    editAvatarError.textContent = "Veuillez sélectionner un avatar.";
+                    editAvatarError.style.display = 'block';
+                    return;
+                }
+                
+                const avatarMap = {
+                    'avatar1': 'Ghost',
+                    'avatar2': 'Sniper',
+                    'avatar3': 'Shadow',
+                    'avatar4': 'Reaper',
+                    'avatar5': 'Viper'
+                };
+                const newAvatarUrl = `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${avatarMap[selectedAvatar.value]}&backgroundColor=000000`;
+                
+                btnSaveAvatar.disabled = true;
+                btnSaveAvatar.textContent = "ATTENTE...";
+                editAvatarError.style.display = 'none';
+                
+                try {
+                    const { error } = await window.supabaseClient
+                        .from('joueurs')
+                        .update({ avatar_url: newAvatarUrl })
+                        .eq('whatsapp', currentUser.whatsapp);
+
+                    if (error) throw error;
+                    
+                    document.getElementById('prof-avatar').src = newAvatarUrl;
+                    editAvatarContainer.style.display = 'none';
+                    alert("Avatar mis à jour !");
+                    
+                } catch (err) {
+                    console.error(err);
+                    editAvatarError.textContent = "Erreur de mise à jour.";
+                    editAvatarError.style.display = 'block';
+                } finally {
+                    btnSaveAvatar.disabled = false;
+                    btnSaveAvatar.textContent = "Mettre à jour";
+                }
+            });
 
             // --- Edit Pseudo Logic ---
             const btnEdit = document.getElementById('btn-edit-pseudo');
