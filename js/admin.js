@@ -141,6 +141,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             calcDetails.textContent = explanation;
             simulationResult.style.display = 'block';
 
+            const playerId = playerSelect.value;
+            if (playerId) {
+                const player = allPlayers.find(p => p.id === playerId);
+                if (player) {
+                    const currentPoints = parseInt(player.points) || 0;
+                    const newTotal = currentPoints + totalPoints;
+                    document.getElementById('calc-new-total').textContent = newTotal;
+                    document.getElementById('calc-new-grade').textContent = computeGrade(newTotal);
+                }
+            } else {
+                document.getElementById('calc-new-total').textContent = '-';
+                document.getElementById('calc-new-grade').textContent = 'Sélectionnez un joueur';
+            }
+
             if (totalPoints < 0) {
                 simulationResult.style.borderColor = '#ff3333';
                 simulationResult.style.color = '#ff3333';
