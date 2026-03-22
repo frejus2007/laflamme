@@ -195,22 +195,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 const activeSeasonId = seasonData[0].id;
 
-                const newPointsStr = (parseInt(player.points) + pointsToAdd).toString();
-                const newKillsStr = (parseInt(player.kills) + kills).toString();
-                const recordPointsStr = pointsToAdd > parseInt(player.record_points) ? pointsToAdd.toString() : player.record_points;
-                const recordKillsStr = kills > parseInt(player.record_kills) ? kills.toString() : player.record_kills;
+                const currentPoints = parseInt(player.points) || 0;
+                const currentKills = parseInt(player.kills) || 0;
+                const currentRecordPoints = parseInt(player.record_points) || 0;
+                const currentRecordKills = parseInt(player.record_kills) || 0;
+
+                const newPointsStr = (currentPoints + pointsToAdd).toString();
+                const newKillsStr = (currentKills + kills).toString();
+                const recordPointsStr = pointsToAdd > currentRecordPoints ? pointsToAdd.toString() : currentRecordPoints.toString();
+                const recordKillsStr = kills > currentRecordKills ? kills.toString() : currentRecordKills.toString();
 
                 const newGrade = computeGrade(parseInt(newPointsStr));
+
+                const adminBonusStr = document.getElementById('match-admin-bonus').value;
+                const adminBonus = adminBonusStr ? parseInt(adminBonusStr) : 0;
 
                 // Begin Database transaction via two calls
                 const { error: matchError } = await window.supabaseClient.from('matchs').insert([{
                     joueur_id: playerId,
                     saison_id: activeSeasonId,
                     mode: mode,
-                    resultat: (mode === 'MJ' && document.querySelector('input[name="mj-team"]:checked').value === 'win') ? 'win' : 'loss',
+                    est_victoire: mode === 'MJ' ? (document.querySelector('input[name="mj-team"]:checked').value === 'win') : null,
+                    joueurs_br_total: mode === 'BR' ? parseInt(document.getElementById('br-total-players').value) : null,
+                    bonus_admin: adminBonus,
                     points_gagnes: pointsToAdd,
                     kills: kills,
-                    rang_final: rank,
+                    rang: rank,
                     est_mvp: isMvp
                 }]);
 
