@@ -296,15 +296,17 @@
 
                     data.forEach(p => {
                         const defaultAvatar = 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Ghost&backgroundColor=000000';
-                        const avatarUrl = p.avatar ? p.avatar : defaultAvatar;
+                        const avatarUrl = p.avatar_url ? p.avatar_url : defaultAvatar;
 
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td>
-                                <div class="player-info-cell">
-                                    <img src="${avatarUrl}" alt="Avatar" class="player-avatar-small">
-                                    <strong class="orbitron" style="color: #fff;">${p.pseudo}</strong>
-                                </div>
+                                <a href="../profil.html?id=${p.id}" target="_blank" style="text-decoration:none;">
+                                    <div class="player-info-cell">
+                                        <img src="${avatarUrl}" alt="Avatar" class="player-avatar-small">
+                                        <strong class="orbitron" style="color: #fff; transition: 0.3s;" onmouseover="this.style.color='var(--flame-orange)'" onmouseout="this.style.color='#fff'">${p.pseudo}</strong>
+                                    </div>
+                                </a>
                             </td>
                             <td style="color: #aaa;">${p.whatsapp}</td>
                             <td><span style="background: #222; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;">${p.specialite}</span></td>

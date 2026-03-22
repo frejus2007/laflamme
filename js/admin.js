@@ -149,10 +149,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const newTotal = currentPoints + totalPoints;
                     document.getElementById('calc-new-total').textContent = newTotal;
                     document.getElementById('calc-new-grade').textContent = computeGrade(newTotal);
+                    
+                    const profileLinkBox = document.getElementById('sim-profile-link-container');
+                    if (profileLinkBox) profileLinkBox.style.display = 'block';
+                    const profileLink = document.getElementById('sim-profile-link');
+                    if (profileLink) profileLink.href = `../profil.html?id=${playerId}`;
                 }
             } else {
                 document.getElementById('calc-new-total').textContent = '-';
                 document.getElementById('calc-new-grade').textContent = 'Sélectionnez un joueur';
+                
+                const profileLinkBox = document.getElementById('sim-profile-link-container');
+                if (profileLinkBox) profileLinkBox.style.display = 'none';
             }
 
             if (totalPoints < 0) {
@@ -214,12 +222,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const currentRecordPoints = parseInt(player.record_points) || 0;
                 const currentRecordKills = parseInt(player.record_kills) || 0;
 
-                const newPointsStr = (currentPoints + pointsToAdd).toString();
-                const newKillsStr = (currentKills + kills).toString();
-                const recordPointsStr = pointsToAdd > currentRecordPoints ? pointsToAdd.toString() : currentRecordPoints.toString();
-                const recordKillsStr = kills > currentRecordKills ? kills.toString() : currentRecordKills.toString();
+                const newPointsInt = currentPoints + pointsToAdd;
+                const newKillsInt = currentKills + kills;
+                const newRecordPointsInt = pointsToAdd > currentRecordPoints ? pointsToAdd : currentRecordPoints;
+                const newRecordKillsInt = kills > currentRecordKills ? kills : currentRecordKills;
 
-                const newGrade = computeGrade(parseInt(newPointsStr));
+                const newGrade = computeGrade(newPointsInt);
 
                 const adminBonusStr = document.getElementById('match-admin-bonus').value;
                 const adminBonus = adminBonusStr ? parseInt(adminBonusStr) : 0;
@@ -241,22 +249,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (matchError) throw matchError;
 
                 const { error: updateError } = await window.supabaseClient.from('joueurs').update({
-                    points: newPointsStr,
-                    kills: newKillsStr,
-                    record_points: recordPointsStr,
-                    record_kills: recordKillsStr,
+                    points: newPointsInt,
+                    kills: newKillsInt,
+                    record_points: newRecordPointsInt,
+                    record_kills: newRecordKillsInt,
                     grade: newGrade
                 }).eq('id', playerId);
 
                 if (updateError) throw updateError;
 
-                alert("Match ajouté avec succès ! Les statitiques du joueur ont été mises à jour.");
+                alert("Match ajouté avec succès ! Les statistiques du joueur ont été mises à jour.");
 
                 // Update Local state to match DB
-                player.points = newPointsStr;
-                player.kills = newKillsStr;
-                player.record_points = recordPointsStr;
-                player.record_kills = recordKillsStr;
+                player.points = newPointsInt;
+                player.kills = newKillsInt;
+                player.record_points = newRecordPointsInt;
+                player.record_kills = newRecordKillsInt;
                 player.grade = newGrade;
 
                 addMatchForm.reset();
@@ -265,7 +273,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             } catch (err) {
                 console.error("Erreur ajout de match:", err);
-                alert("Erreur lors de l'enregistrement du match. Détail dans la console.");
+                alert("Erreur: " + (err.message || "Impossible d'enregistrer."));
             } finally {
                 activeBtnSubmit.disabled = false;
                 activeBtnSubmit.textContent = "VALIDER ET AJOUTER LE MATCH";

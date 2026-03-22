@@ -375,26 +375,47 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const sessionData = localStorage.getItem('flamme_user');
-            if (!sessionData) {
+            const userSession = sessionData ? JSON.parse(sessionData) : null;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewPlayerId = urlParams.get('id');
+
+            // Prevent viewing own profile without session, unless viewing someone else
+            if (!userSession && !viewPlayerId) {
                 window.location.href = 'connexion.html';
                 return;
             }
 
-            const userSession = JSON.parse(sessionData);
+            const hideControls = () => {
+                const btnEdit = document.getElementById('btn-edit-pseudo');
+                const btnAvatar = document.getElementById('btn-edit-avatar');
+                const navLogout = document.getElementById('nav-logout');
+                if(btnEdit) btnEdit.style.display = 'none';
+                if(btnAvatar) btnAvatar.style.display = 'none';
+                if(navLogout) navLogout.style.display = 'none';
+            };
 
             try {
                 if (!window.supabaseClient) throw new Error("Supabase non initialisé");
 
-                const { data, error } = await window.supabaseClient
-                    .from('joueurs')
-                    .select('*')
-                    .eq('whatsapp', userSession.whatsapp)
-                    .single();
+                let query = window.supabaseClient.from('joueurs').select('*');
+                if (viewPlayerId) {
+                    query = query.eq('id', viewPlayerId);
+                    hideControls();
+                } else {
+                    query = query.eq('whatsapp', userSession.whatsapp);
+                }
+
+                const { data, error } = await query.single();
 
                 if (error || !data) {
                     console.error("User not found in DB");
-                    localStorage.removeItem('flamme_user');
-                    window.location.href = 'connexion.html';
+                    if (!viewPlayerId) {
+                        localStorage.removeItem('flamme_user');
+                        window.location.href = 'connexion.html';
+                    } else {
+                        document.querySelector('.profile-container').innerHTML = "<h2 style='text-align:center; color:#ff3333;'>Joueur Introuvable</h2>";
+                    }
                     return;
                 }
 
@@ -403,7 +424,7 @@
                 document.getElementById('prof-prenom').textContent = data.prenom;
                 document.getElementById('prof-spec').textContent = `Spécialité: ${data.specialite}`;
                 document.getElementById('prof-grade').textContent = data.grade;
-                document.getElementById('prof-avatar').src = data.avatar;
+                document.getElementById('prof-avatar').src = data.avatar_url || 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Ghost&backgroundColor=000000';
 
                 document.getElementById('prof-points').textContent = data.points;
                 document.getElementById('prof-kills').textContent = data.kills;
