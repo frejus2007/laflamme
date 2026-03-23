@@ -482,7 +482,10 @@
                     const pointsInTier = userPoints - currentTierPoints;
                     const tierTotalPoints = nextTierPoints - currentTierPoints;
                     
-                    progressPercent = (pointsInTier / tierTotalPoints) * 100;
+                    const tierProgress = pointsInTier / tierTotalPoints; // 0.0 to 1.0
+                    const totalIntervals = gradeThresholds.length - 1;
+                    
+                    progressPercent = ((currentGradeIndex + tierProgress) / totalIntervals) * 100;
                     progressPercent = Math.max(0, Math.min(100, progressPercent)); // Clamp
                 }
 
