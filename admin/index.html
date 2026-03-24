@@ -268,8 +268,12 @@
 
                     <div class="match-form-grid">
                         <div class="form-group">
-                            <label>Rang (Place terminée)</label>
+                            <label>Rang global (Top équipe / Pl. indiv MJ)</label>
                             <input type="number" id="match-rank" class="form-control" min="1" required>
+                        </div>
+                        <div class="form-group" id="br-intra-rank-group" style="display: none;">
+                            <label>Rang intra-équipe (BR seulement)</label>
+                            <input type="number" id="br-intra-rank" class="form-control" min="1" max="4" value="1">
                         </div>
                         <div class="form-group">
                             <label>Nombre de Kills</label>

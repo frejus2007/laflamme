@@ -54,12 +54,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         setTimeout(filterPlayers, 500);
 
         modeSelect.addEventListener('change', (e) => {
+            const intraRankGroup = document.getElementById('br-intra-rank-group');
+            const matchRank = document.getElementById('match-rank');
             if (e.target.value === 'MJ') {
                 mjTeamGroup.style.display = 'block';
                 brPlayersGroup.style.display = 'none';
+                if(intraRankGroup) intraRankGroup.style.display = 'none';
+                if(matchRank) matchRank.max = '5';
             } else {
                 mjTeamGroup.style.display = 'none';
                 brPlayersGroup.style.display = 'block';
+                if(intraRankGroup) intraRankGroup.style.display = 'block';
+                if(matchRank) matchRank.removeAttribute('max');
             }
             filterPlayers();
         });
@@ -100,32 +106,35 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (mode === 'MJ') {
                 const teamResult = document.querySelector('input[name="mj-team"]:checked').value;
+                if (rank > 5) {
+                    alert("Erreur: En MJ, le rang individuel maximum est 5.");
+                    return null;
+                }
                 if (teamResult === 'win') {
-                    if (rank === 1) basePoints = 10;
-                    else if (rank === 2) basePoints = 7;
-                    else if (rank === 3) basePoints = 5;
+                    if (rank === 1) basePoints = 12;
+                    else if (rank === 2) basePoints = 9;
+                    else if (rank === 3) basePoints = 6;
                     else if (rank === 4) basePoints = 3;
-                    else if (rank === 5) basePoints = 2;
-                    else basePoints = 0;
+                    else if (rank >= 5) basePoints = 2;
                     explanation += `${basePoints} pts (Victoire). `;
                 } else {
-                    if (rank === 1) basePoints = 5;
-                    else if (rank === 2) basePoints = 3;
-                    else if (rank === 3) basePoints = 1;
-                    else if (rank === 4) basePoints = -3;
-                    else if (rank === 5) basePoints = -5;
-                    else basePoints = -5;
+                    if (rank === 1) basePoints = 7;
+                    else if (rank === 2) basePoints = 5;
+                    else if (rank === 3) basePoints = 2;
+                    else if (rank === 4) basePoints = -2;
+                    else if (rank >= 5) basePoints = -5;
                     explanation += `${basePoints} pts (Défaite). `;
                 }
             } else if (mode === 'BR') {
                 const brType = document.getElementById('br-match-type').value;
                 const brSlots = parseInt(document.getElementById('br-slots').value);
-                const totalPlayers = parseInt(document.getElementById('br-total-players').value);
+                const intraRankInput = document.getElementById('br-intra-rank');
+                const intraRank = intraRankInput ? (parseInt(intraRankInput.value) || 1) : 1;
                 const msgEl = document.getElementById('br-validation-msg');
-                msgEl.style.display = 'none';
+                if(msgEl) msgEl.style.display = 'none';
 
-                if (!brSlots || !totalPlayers) {
-                    alert("Veuillez remplir les champs BR (slots et joueurs).");
+                if (!brSlots) {
+                    alert("Veuillez remplir le champ Slots (Équipes).");
                     return null;
                 }
                 if (rank > brSlots) {
@@ -133,44 +142,46 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return null;
                 }
 
-                // Validation
-                if (brType === 'Solo' && totalPlayers !== brSlots) {
-                    msgEl.textContent = `Erreur: En Solo, 1 joueur/équipe. Joueurs (${totalPlayers}) != Slots (${brSlots}).`;
-                    msgEl.style.display = 'block';
-                    return null;
-                } else if (brType === 'Duo' && totalPlayers !== brSlots * 2) {
-                    msgEl.textContent = `Erreur: En Duo, 2 joueurs/équipe. Joueurs attendus: ${brSlots * 2}.`;
-                    msgEl.style.display = 'block';
-                    return null;
-                } else if (brType === 'Squad' && totalPlayers > brSlots * 4) {
-                    msgEl.textContent = `Erreur: En Squad, max 4 joueurs/équipe. Joueurs (${totalPlayers}) > Slotsx4 (${brSlots * 4}).`;
-                    msgEl.style.display = 'block';
-                    return null;
-                }
-
-                // Multiplicateur
-                const mult = brType === 'Solo' ? 1.2 : (brType === 'Duo' ? 1.1 : 1.0);
-
-                // Math formula
-                const X = brSlots > 1 ? (brSlots - rank) / (brSlots - 1) : 1;
-                const maxPts = 10 + (totalPlayers / 4) * mult;
-                const minPts = -5;
-                
-                const placementPoints = Math.round(minPts + (maxPts - minPts) * Math.pow(X, 1.5));
+                const placementPoints = Math.round(((brSlots - rank + 1) / brSlots) * 20);
                 basePoints = placementPoints;
                 
-                explanation += `${basePoints} pts (Placement ${rank}/${brSlots}) | ${brType} `;
+                let intraBonus = 0;
+                if (brType === 'Duo') {
+                    if (intraRank === 1) intraBonus = 3;
+                    else if (intraRank === 2) intraBonus = -1;
+                } else if (brType === 'Squad') {
+                    if (intraRank === 1) intraBonus = 5;
+                    else if (intraRank === 2) intraBonus = 2;
+                    else if (intraRank === 3) intraBonus = 0;
+                    else if (intraRank === 4) intraBonus = -4;
+                }
+                basePoints += intraBonus;
+                
+                explanation += `${placementPoints} pts (Pl. ${rank}/${brSlots}) `;
+                if (intraBonus !== 0) explanation += `| Intra-team (${intraRank}): ${intraBonus > 0 ? '+'+intraBonus : intraBonus} `;
             }
 
             let totalPoints = basePoints;
-            if (mode === 'BR' && kills > 0) {
-                const killPoints = kills * 2;
-                totalPoints += killPoints;
-                explanation += `| Kills (+${killPoints}) `;
-            }
             if (isMvp) {
-                totalPoints += 5;
-                explanation += "| MVP (+5) ";
+                if (mode === 'MJ') {
+                    totalPoints += 5;
+                    explanation += "| MVP (+5) ";
+                } else if (mode === 'BR') {
+                    const brType = document.getElementById('br-match-type').value;
+                    const intraRankInput = document.getElementById('br-intra-rank');
+                    const intraRank = intraRankInput ? (parseInt(intraRankInput.value) || 1) : 1;
+                    if (intraRank === 1) {
+                        if (brType === 'Duo') {
+                            totalPoints += 5;
+                            explanation += "| MVP (+5) ";
+                        } else if (brType === 'Squad') {
+                            totalPoints += 6;
+                            explanation += "| MVP (+6) ";
+                        }
+                    } else {
+                        explanation += "| (MVP ignoré, intra > 1) ";
+                    }
+                }
             }
             if (adminBonus !== 0) {
                 totalPoints += adminBonus;
@@ -272,6 +283,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const adminBonusStr = document.getElementById('match-admin-bonus').value;
                 const adminBonus = adminBonusStr ? parseInt(adminBonusStr) : 0;
 
+                // Get intra_rank safely if it exists
+                const intraRankInput = document.getElementById('br-intra-rank');
+                const finalIntraRank = (mode === 'BR' && intraRankInput) ? parseInt(intraRankInput.value) : null;
+
                 // Begin Database transaction via two calls
                 const { error: matchError } = await window.supabaseClient.from('matchs').insert([{
                     joueur_id: playerId,
@@ -281,6 +296,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     joueurs_br_total: mode === 'BR' ? parseInt(document.getElementById('br-total-players').value) : null,
                     format_br: mode === 'BR' ? document.getElementById('br-match-type').value : null,
                     slots_br: mode === 'BR' ? parseInt(document.getElementById('br-slots').value) : null,
+                    intra_rank_br: finalIntraRank,
                     bonus_admin: adminBonus,
                     points_gagnes: pointsToAdd,
                     kills: kills,
