@@ -85,6 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const executeCalculation = () => {
             const mode = modeSelect.value;
             const rank = parseInt(document.getElementById('match-rank').value);
+            const kills = parseInt(document.getElementById('match-kills').value) || 0;
             const isMvp = document.getElementById('match-mvp').checked;
             const adminBonusStr = document.getElementById('match-admin-bonus').value;
             const adminBonus = adminBonusStr ? parseInt(adminBonusStr) : 0;
@@ -117,24 +118,63 @@ document.addEventListener('DOMContentLoaded', async () => {
                     explanation += `${basePoints} pts (Défaite). `;
                 }
             } else if (mode === 'BR') {
+                const brType = document.getElementById('br-match-type').value;
+                const brSlots = parseInt(document.getElementById('br-slots').value);
                 const totalPlayers = parseInt(document.getElementById('br-total-players').value);
-                if (!totalPlayers || rank > totalPlayers) {
-                    alert("Le rang ne peut pas être supérieur au nombre de joueurs.");
+                const msgEl = document.getElementById('br-validation-msg');
+                msgEl.style.display = 'none';
+
+                if (!brSlots || !totalPlayers) {
+                    alert("Veuillez remplir les champs BR (slots et joueurs).");
                     return null;
                 }
-                const rawPoints = ((totalPlayers - rank + 1) / totalPlayers) * 20;
-                basePoints = Math.round(rawPoints);
-                explanation += `${basePoints} pts (Formule BR: ${totalPlayers} joueurs). `;
+                if (rank > brSlots) {
+                    alert(`Le rang de l'équipe (${rank}) ne peut pas être supérieur au nombre de slots (${brSlots}).`);
+                    return null;
+                }
+
+                // Validation
+                if (brType === 'Solo' && totalPlayers !== brSlots) {
+                    msgEl.textContent = `Erreur: En Solo, 1 joueur/équipe. Joueurs (${totalPlayers}) != Slots (${brSlots}).`;
+                    msgEl.style.display = 'block';
+                    return null;
+                } else if (brType === 'Duo' && totalPlayers !== brSlots * 2) {
+                    msgEl.textContent = `Erreur: En Duo, 2 joueurs/équipe. Joueurs attendus: ${brSlots * 2}.`;
+                    msgEl.style.display = 'block';
+                    return null;
+                } else if (brType === 'Squad' && totalPlayers > brSlots * 4) {
+                    msgEl.textContent = `Erreur: En Squad, max 4 joueurs/équipe. Joueurs (${totalPlayers}) > Slotsx4 (${brSlots * 4}).`;
+                    msgEl.style.display = 'block';
+                    return null;
+                }
+
+                // Multiplicateur
+                const mult = brType === 'Solo' ? 1.2 : (brType === 'Duo' ? 1.1 : 1.0);
+
+                // Math formula
+                const X = brSlots > 1 ? (brSlots - rank) / (brSlots - 1) : 1;
+                const maxPts = 10 + (totalPlayers / 4) * mult;
+                const minPts = -5;
+                
+                const placementPoints = Math.round(minPts + (maxPts - minPts) * Math.pow(X, 1.5));
+                basePoints = placementPoints;
+                
+                explanation += `${basePoints} pts (Placement ${rank}/${brSlots}) | ${brType} `;
             }
 
             let totalPoints = basePoints;
+            if (mode === 'BR' && kills > 0) {
+                const killPoints = kills * 2;
+                totalPoints += killPoints;
+                explanation += `| Kills (+${killPoints}) `;
+            }
             if (isMvp) {
                 totalPoints += 5;
-                explanation += " | MVP (+5) ";
+                explanation += "| MVP (+5) ";
             }
             if (adminBonus !== 0) {
                 totalPoints += adminBonus;
-                explanation += ` | Admin Bonus (${adminBonus > 0 ? '+' : ''}${adminBonus}) `;
+                explanation += `| Admin Bonus (${adminBonus > 0 ? '+' : ''}${adminBonus}) `;
             }
 
             calcPointsVal.textContent = totalPoints;
@@ -239,6 +279,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     mode: mode,
                     est_victoire: mode === 'MJ' ? (document.querySelector('input[name="mj-team"]:checked').value === 'win') : null,
                     joueurs_br_total: mode === 'BR' ? parseInt(document.getElementById('br-total-players').value) : null,
+                    format_br: mode === 'BR' ? document.getElementById('br-match-type').value : null,
+                    slots_br: mode === 'BR' ? parseInt(document.getElementById('br-slots').value) : null,
                     bonus_admin: adminBonus,
                     points_gagnes: pointsToAdd,
                     kills: kills,
