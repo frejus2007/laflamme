@@ -135,9 +135,9 @@
             <p>Bienvenue dans le manuel officiel du clan <strong>La Flamme</strong>. Le système de points du clan est
                 strict, automatique, et valide par l'administration.</p>
             <p>Les points d'un joueur suite à un match sont calculés selon la base suivante :</p>
-            <div class="formula-box">Points du Match = Points de Rang + Bonus MVP + Bonus Admin</div>
+            <div class="formula-box">Points du Match = Points de Rang + Bonus Intra + Bonus MVP + Bonus Admin</div>
             <p><strong>Note importante :</strong> Les KILLS sont enregistrés sur votre profil et aident au classement,
-                mais <em>ne donnent pas directement de points clan</em>.</p>
+                mais <em>ne donnent pas directement de points clan</em> (hors départage ou rang interne).</p>
         </div>
 
         <!-- Mode MJ -->
@@ -156,15 +156,15 @@
                         </tr>
                         <tr>
                             <td>1er</td>
-                            <td class="bonus">+10</td>
+                            <td class="bonus">+12</td>
                         </tr>
                         <tr>
                             <td>2ème</td>
-                            <td class="bonus">+7</td>
+                            <td class="bonus">+9</td>
                         </tr>
                         <tr>
                             <td>3ème</td>
-                            <td class="bonus">+5</td>
+                            <td class="bonus">+6</td>
                         </tr>
                         <tr>
                             <td>4ème</td>
@@ -189,19 +189,19 @@
                         </tr>
                         <tr>
                             <td>1er</td>
-                            <td class="bonus">+5</td>
+                            <td class="bonus">+7</td>
                         </tr>
                         <tr>
                             <td>2ème</td>
-                            <td class="bonus">+3</td>
+                            <td class="bonus">+5</td>
                         </tr>
                         <tr>
                             <td>3ème</td>
-                            <td class="bonus">+1</td>
+                            <td class="bonus">+2</td>
                         </tr>
                         <tr>
                             <td>4ème</td>
-                            <td class="malus">-3</td>
+                            <td class="malus">-2</td>
                         </tr>
                         <tr>
                             <td>5ème</td>
@@ -217,45 +217,49 @@
         <!-- Mode BR -->
         <div class="rules-section">
             <h2>🪂 Mode Battle Royale (BR)</h2>
-            <p>En Battle Royale, les points dépendent de votre classement final comparé au nombre de joueurs total.</p>
+            <p>En Battle Royale, les points de base dépendent du classement final de l'équipe comparé au <strong>nombre total d'équipes (slots)</strong>.</p>
             <div class="formula-box" style="font-size: 0.9rem;">
-                Formule : Arrondi( (Nombre_joueurs − Rang + 1) / Nombre_joueurs × 20 )
+                Points de Base = Arrondi( (Nombre_Equipes − Rang_Equipe + 1) / Nombre_Equipes × 20 )
             </div>
-            <p>Exemple pour une partie de 20 joueurs :</p>
-            <table class="mini-table" style="max-width: 300px;">
-                <tr>
-                    <th>Rang</th>
-                    <th>Points</th>
-                </tr>
-                <tr>
-                    <td>1er</td>
-                    <td class="bonus">+20</td>
-                </tr>
-                <tr>
-                    <td>5ème</td>
-                    <td class="bonus">+16</td>
-                </tr>
-                <tr>
-                    <td>10ème</td>
-                    <td class="bonus">+11</td>
-                </tr>
-                <tr>
-                    <td>20ème</td>
-                    <td>+1</td>
-                </tr>
-            </table>
+            
+            <h3 style="color: var(--text-color); margin-top: 20px; font-size: 1.1rem;">Points Intra-Équipe</h3>
+            <p>Un bonus ou malus est ajouté en fonction de votre classement au sein de votre escouade :</p>
+            <div class="points-grid">
+                <div>
+                    <h4 style="color: var(--flame-orange); margin-bottom: 5px; font-size: 0.9rem;">Format Duo</h4>
+                    <table class="mini-table">
+                        <tr><th>Rang Interne</th><th>Points</th></tr>
+                        <tr><td>1er</td><td class="bonus">+3</td></tr>
+                        <tr><td>2ème</td><td class="malus">-1</td></tr>
+                    </table>
+                </div>
+                <div>
+                    <h4 style="color: var(--flame-orange); margin-bottom: 5px; font-size: 0.9rem;">Format Squad</h4>
+                    <table class="mini-table">
+                        <tr><th>Rang Interne</th><th>Points</th></tr>
+                        <tr><td>1er</td><td class="bonus">+5</td></tr>
+                        <tr><td>2ème</td><td class="bonus">+2</td></tr>
+                        <tr><td>3ème</td><td>0</td></tr>
+                        <tr><td>4ème</td><td class="malus">-4</td></tr>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- Bonus et Malus spéciales -->
         <div class="rules-section">
             <h2>⭐ Bonus & Malus Spéciaux</h2>
             <ul>
-                <li><strong>MVP (Most Valuable Player) :</strong> <span class="bonus">+5 points</span> accordés
-                    automatiquement si la case MVP est cochée lors de l'ajout.</li>
-                <li><strong>Bonus Admin :</strong> Variables. Les admins peuvent ajouter manuellement des points
-                    exceptionnels (ex: +2, +5, +10) via le formulaire.</li>
-                <li><strong>Changement de Spécialité (MJ ↔ BR) :</strong> Pénalité stricte de <span class="malus">-20
-                        points</span>. Maximum autorisé : 1 fois par saison.</li>
+                <li><strong>MVP (Most Valuable Player) :</strong> 
+                    <ul style="margin-top: 5px;">
+                        <li><span style="color:#ddd;">Mode MJ :</span> <span class="bonus">+5 points</span></li>
+                        <li><span style="color:#ddd;">BR Duo (1er de l'équipe) :</span> <span class="bonus">+5 points</span></li>
+                        <li><span style="color:#ddd;">BR Squad (1er de l'équipe) :</span> <span class="bonus">+6 points</span></li>
+                    </ul>
+                </li>
+                <br>
+                <li><strong>Bonus Admin :</strong> Variables. Les admins peuvent ajouter manuellement des points exceptionnels (ex: +2, +5, +10) via le formulaire.</li>
+                <li><strong>Changement de Spécialité (MJ ↔ BR) :</strong> Pénalité stricte de <span class="malus">-20 points</span>. Maximum autorisé : 1 fois par saison.</li>
             </ul>
         </div>
 
