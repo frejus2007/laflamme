@@ -214,14 +214,28 @@
                 <div class="match-form-grid">
                     <div class="form-group">
                         <label>Mode de Jeu</label>
-                        <select id="match-mode" class="form-control" style="margin-bottom: 10px;" required>
+                        <select id="match-mode" class="form-control" required>
                             <option value="" disabled selected>Choisir le mode</option>
                             <option value="MJ">Multijoueur (MJ)</option>
                             <option value="BR">Battle Royale (BR)</option>
                         </select>
-                        <div id="mj-team-group" style="display: none;">
-                            <label><input type="radio" name="mj-team" value="win" checked> Gagnante</label>
-                            <label><input type="radio" name="mj-team" value="loss"> Perdante</label>
+                    </div>
+                </div>
+
+                <div id="mj-team-group" style="display: none; background: rgba(51, 170, 255, 0.05); padding: 15px; border-radius: 8px; border: 1px dashed #33aaff; margin-bottom: 20px;">
+                    <div class="match-form-grid">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="color: #33aaff; font-weight: bold; margin-bottom: 15px; display: block;">Résultat de l'Équipe</label>
+                            <div style="display: flex; gap: 20px;">
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px; border: 1px solid #33ff33; border-radius: 5px; background: rgba(51, 255, 51, 0.1); width: 100%; justify-content: center;">
+                                    <input type="radio" name="mj-team" value="win" checked style="accent-color: #33ff33; transform: scale(1.5);"> 
+                                    <span style="color: #33ff33; font-weight: bold;">🏆 Victoire</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px; border: 1px solid #ff3333; border-radius: 5px; background: rgba(255, 51, 51, 0.1); width: 100%; justify-content: center;">
+                                    <input type="radio" name="mj-team" value="loss" style="accent-color: #ff3333; transform: scale(1.5);"> 
+                                    <span style="color: #ff3333; font-weight: bold;">💀 Défaite</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -267,6 +267,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             return result;
         }
 
+        const computeGrade = (points) => {
+            if (points >= 1400) return 'Général';
+            if (points >= 950) return 'Commandant';
+            if (points >= 600) return 'Lieutenant';
+            if (points >= 300) return 'Sergent';
+            if (points >= 120) return 'Soldat';
+            return 'Recrue';
+        };
+
         function previewCalculation() {
             if (!currentSessionConfig) return;
             const rank = parseInt(document.getElementById('match-rank').value);
