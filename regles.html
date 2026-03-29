@@ -143,16 +143,20 @@
         <!-- Mode MJ -->
         <div class="rules-section">
             <h2>🎮 MODE MJ (Multijoueur)</h2>
-            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Principe général :</h3>
-            <p>Les points sont attribués selon :</p>
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🔷 Principe général :</h3>
+            <p>Points basés sur :</p>
             <ul>
-                <li>le rang individuel dans la partie (1 à 5)</li>
-                <li>et le résultat de l'équipe (victoire ou défaite)</li>
+                <li>classement individuel (1 à 5)</li>
+                <li>résultat de l'équipe</li>
+                <li>performance (kills)</li>
+                <li>bonus/malus</li>
             </ul>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 Score MAX = 33 points (hors bonus admin)</p>
 
             <hr style="border-color: #333; margin: 20px 0;">
 
-            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Barème des points :</h3>
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🔢 1. Barème des points :</h3>
+            <p style="margin-bottom: 10px;">Rang → (Équipe gagnante) / (Équipe perdante)</p>
             <table class="mini-table" style="margin-bottom: 20px;">
                 <tr>
                     <th>Rang</th>
@@ -177,109 +181,218 @@
                 <tr>
                     <td>4e</td>
                     <td class="bonus">+6</td>
-                    <td class="bonus">+4</td>
+                    <td class="bonus">+3</td>
                 </tr>
                 <tr>
                     <td>5e</td>
                     <td class="bonus">+4</td>
-                    <td class="bonus">+2</td>
+                    <td>0</td>
                 </tr>
             </table>
 
             <hr style="border-color: #333; margin: 20px 0;">
 
-            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Règles importantes :</h3>
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">⚠️ 2. Malus performance :</h3>
             <ul>
-                <li>L'équipe gagnante gagne plus que l'équipe perdante</li>
-                <li>Le classement individuel reste déterminant</li>
+                <li>5e + défaite → <span class="malus">0 point</span></li>
+                <li>4e + défaite → <span class="malus">-1 point</span></li>
+                <li>5e deux fois d'affilée (même session) → <span class="malus">-2 points</span></li>
             </ul>
 
             <hr style="border-color: #333; margin: 20px 0;">
 
-            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🏆 Bonus :</h3>
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🔫 3. Kills (bonus progressif)</h3>
             <ul>
-                <li><strong>MVP :</strong> <span class="bonus">+5 points</span></li>
-                <li><strong>Bonus admin :</strong> <span class="bonus">+3 à +10 points</span></li>
+                <li>0 à 10 kills → <span class="bonus">+0,5 / kill</span></li>
+                <li>11 à 20 → <span class="bonus">+0,3 / kill</span></li>
+                <li>21+ → <span class="bonus">+0,1 / kill</span></li>
             </ul>
-
-            <hr style="border-color: #333; margin: 20px 0;">
-
-            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">⚠️ Formation des équipes :</h3>
+            <p><strong>🔒 Limites :</strong></p>
             <ul>
-                <li>Les équipes sont formées aléatoirement</li>
-                <li>Si une équipe dépasse 5 joueurs :
+                <li>Cap kills = <span class="bonus">+6</span></li>
+                <li>Bonus :
                     <ul style="margin-top: 5px;">
-                        <li>Certains joueurs ne jouent pas une manche</li>
-                        <li>Ces joueurs reçoivent automatiquement les points du 4e de leur équipe</li>
+                        <li>30+ kills → <span class="bonus">+1</span></li>
+                        <li>50+ kills → <span class="bonus">+2</span></li>
                     </ul>
                 </li>
             </ul>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 MAX kills = +8</p>
+            <p style="color: #ff3333; font-weight: bold;">⚠️ Les kills ne peuvent pas dépasser 50% des points de base</p>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🏆 4. Bonus gameplay :</h3>
+            <ul>
+                <li>MVP → <span class="bonus">+5</span></li>
+            </ul>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 Inclus dans le plafond des 33</p>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🚫 5. Bonus admin :</h3>
+            <ul>
+                <li>Bonus admin → <span class="bonus">+3 à +5</span></li>
+            </ul>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 ❗ NE COMPTE PAS dans les 33 points<br>👉 Peut faire dépasser le maximum</p>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">📊 Exemple MAX MJ (gameplay uniquement) :</h3>
+            <ul>
+                <li>1er + victoire → 15</li>
+                <li>Kills max → +8</li>
+                <li>MVP → +5</li>
+                <li>Ajustement performance (kills élevés) → +5</li>
+            </ul>
+            <p style="font-size: 1.2rem; margin-top: 10px;">➡️ <strong>TOTAL = 33 points</strong></p>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">📊 Résumé MJ :</h3>
+            <p><strong>Score gameplay =</strong> Base + Kills + MVP − Malus</p>
+            <p><strong>Score final =</strong> Score gameplay + Bonus admin</p>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 Max gameplay = 33<br>👉 Bonus admin = au-dessus</p>
         </div>
 
         <!-- Mode BR -->
         <div class="rules-section">
             <h2>🪂 MODE BR (Battle Royale)</h2>
-            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Principe général :</h3>
-            <p>Les points sont calculés selon :</p>
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🔷 Principe général :</h3>
+            <p>Points basés sur :</p>
             <ul>
-                <li>le classement final de l'équipe</li>
-                <li>le classement du joueur dans son équipe</li>
+                <li>classement de l'équipe</li>
+                <li>rang dans l'équipe</li>
+                <li>performance (kills)</li>
+                <li>bonus/malus</li>
             </ul>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 Score MAX = 33 points (hors bonus admin)</p>
 
             <hr style="border-color: #333; margin: 20px 0;">
 
-            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Calcul des points :</h3>
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🔢 1. Points équipe :</h3>
+            <p><strong>Points équipe =</strong></p>
+            <div class="formula-box" style="font-size: 0.9rem; display: inline-block; margin-top: 10px;">
+                arrondi( (Nombre de teams - Rang + 1) / Nombre de teams × 12 )
+            </div>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 MAX ≈ 12 points</p>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🔢 2. Bonus intra-équipe :</h3>
             <ul>
-                <li><strong>Points équipe =</strong><br>
-                    <div class="formula-box" style="font-size: 0.9rem; display: inline-block; margin-top: 10px;">
-                        arrondi( (Nombre de teams - Rang équipe + 1) / Nombre de teams × 20 )
-                    </div>
+                <li><strong>🔹 Solo :</strong>
+                    <ul style="margin-top: 5px;">
+                        <li>Aucun</li>
+                    </ul>
                 </li>
-            </ul>
-
-            <hr style="border-color: #333; margin: 20px 0;">
-
-            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Bonus intra-équipe :</h3>
-            <ul>
-                <li><strong>Solo :</strong> aucun</li>
-                <li><strong>Duo :</strong>
+                <li><strong>🔹 Duo :</strong>
                     <ul style="margin-top: 5px;">
                         <li>1er → <span class="bonus">+3</span></li>
-                        <li>2e → <span class="malus">-1</span></li>
+                        <li>2e → <span class="bonus">0</span></li>
                     </ul>
                 </li>
-                <li><strong>Squad :</strong>
+                <li><strong>🔹 Squad :</strong>
                     <ul style="margin-top: 5px;">
-                        <li>1er → <span class="bonus">+5</span></li>
+                        <li>1er → <span class="bonus">+4</span></li>
                         <li>2e → <span class="bonus">+2</span></li>
-                        <li>3e → 0</li>
-                        <li>4e → <span class="malus">-4</span></li>
+                        <li>3e → <span class="bonus">0</span></li>
+                        <li>4e → <span class="malus">-2</span></li>
                     </ul>
                 </li>
             </ul>
 
             <hr style="border-color: #333; margin: 20px 0;">
 
-            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🏆 Bonus :</h3>
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">⚠️ 3. Malus performance :</h3>
             <ul>
-                <li><strong>MVP :</strong>
+                <li>Dernier 30% des équipes → <span class="malus">-2</span></li>
+                <li>Dernier joueur + mauvaise team → <span class="malus">-2</span></li>
+            </ul>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🔫 4. Kills (BR)</h3>
+            <ul>
+                <li>1 kill = <span class="bonus">+0,7</span></li>
+            </ul>
+            <p><strong>🔒 Limites :</strong></p>
+            <ul>
+                <li>Cap kills = <span class="bonus">+6</span></li>
+                <li>Bonus :
                     <ul style="margin-top: 5px;">
-                        <li>Solo → 0</li>
-                        <li>Duo → <span class="bonus">+5</span></li>
-                        <li>Squad → <span class="bonus">+6</span></li>
+                        <li>5+ kills → <span class="bonus">+1</span></li>
+                        <li>10+ kills → <span class="bonus">+2</span></li>
+                        <li>15+ kills → <span class="bonus">+3</span></li>
                     </ul>
                 </li>
-                <li><strong>Bonus admin :</strong> <span class="bonus">+3 à +10 points</span></li>
+            </ul>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 MAX kills = +9</p>
+            <p style="color: #ff3333; font-weight: bold;">⚠️ Ajustement :</p>
+            <ul>
+                <li>Si équipe hors top 50% :
+                    <ul style="margin-top: 5px;">
+                        <li>kills ÷ 2</li>
+                        <li>cap réduit à <span class="bonus">+4</span></li>
+                    </ul>
+                </li>
             </ul>
 
             <hr style="border-color: #333; margin: 20px 0;">
 
-            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">À savoir :</h3>
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🏆 5. Bonus gameplay :</h3>
             <ul>
-                <li>Les kills sont affichés mais ne comptent pas dans les points</li>
-                <li>Le classement d'équipe est le facteur principal</li>
-                <li>Le rang dans l'équipe permet de différencier les joueurs</li>
+                <li>MVP :
+                    <ul style="margin-top: 5px;">
+                        <li>Solo → <span class="bonus">0</span></li>
+                        <li>Duo → <span class="bonus">+4</span></li>
+                        <li>Squad → <span class="bonus">+5</span></li>
+                    </ul>
+                </li>
             </ul>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 Inclus dans le plafond des 33</p>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🚫 6. Bonus admin :</h3>
+            <ul>
+                <li>Bonus admin → <span class="bonus">+3 à +5</span></li>
+            </ul>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 ❗ NE COMPTE PAS dans les 33 points</p>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">📊 Exemple MAX BR (gameplay uniquement) :</h3>
+            <ul>
+                <li>1er équipe → 12</li>
+                <li>1er squad → +4</li>
+                <li>Kills optimisés → +9</li>
+                <li>MVP → +5</li>
+                <li>Ajustement performance → +3</li>
+            </ul>
+            <p style="font-size: 1.2rem; margin-top: 10px;">➡️ <strong>TOTAL = 33 points</strong></p>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">📊 Résumé BR :</h3>
+            <p><strong>Score gameplay =</strong> Points équipe + Intra-team + Kills + MVP − Malus</p>
+            <p><strong>Score final =</strong> Score gameplay + Bonus admin</p>
+            <p style="color: var(--flame-yellow); font-weight: bold; margin-top: 10px;">👉 Max gameplay = 33<br>👉 Bonus admin = au-dessus</p>
+            
+            <hr style="border-color: var(--flame-orange); border-width: 2px; margin: 40px 0;">
+            <h3 style="color: var(--flame-yellow); text-align: center; font-size: 1.5rem; text-shadow: 0 0 10px rgba(255, 204, 0, 0.4);">⚖️ ÉQUILIBRAGE FINAL</h3>
+            <div style="background: rgba(0, 0, 0, 0.4); border: 1px dashed var(--flame-orange); padding: 20px; border-radius: 8px; max-width: 400px; margin: 20px auto;">
+                <ul style="list-style: none; padding: 0; font-size: 1.1rem; line-height: 1.8;">
+                    <li><span style="color: #33ff33; margin-right: 10px;">✔</span> MJ max = 33 (gameplay)</li>
+                    <li><span style="color: #33ff33; margin-right: 10px;">✔</span> BR max = 33 (gameplay)</li>
+                    <li><span style="color: #33ff33; margin-right: 10px;">✔</span> Bonus admin séparé</li>
+                </ul>
+            </div>
+            <p style="text-align: center; color: #ddd; margin-top: 15px; line-height: 1.8; font-size: 1.05rem;">
+                <span style="color: var(--flame-yellow);">👉</span> Système équilibré, compétitif et non abusif<br>
+                <span style="color: var(--flame-yellow);">👉</span> Les kills comptent sans dominer<br>
+                <span style="color: var(--flame-yellow);">👉</span> Le classement reste prioritaire
+            </p>
         </div>
 
         <!-- Grades -->

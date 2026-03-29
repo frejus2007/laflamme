@@ -205,53 +205,56 @@
         <!-- Main Content -->
         <main class="admin-content">
             <div class="admin-header">
-                <h1>Saisie de Match</h1>
+                <h1>Saisie Rapide (Session de Match)</h1>
             </div>
 
-            <div class="admin-card" style="max-width: 800px;">
-                <h2>Ajouter un Nouveau Résultat</h2>
-                <form id="add-match-form">
+            <!-- ÉTAPE 1: Configuration du Match -->
+            <div id="match-config-card" class="admin-card" style="max-width: 800px;">
+                <h2>Étape 1 : Configuration du Match</h2>
+                <div class="match-form-grid">
+                    <div class="form-group">
+                        <label>Mode de Jeu</label>
+                        <select id="match-mode" class="form-control" style="margin-bottom: 10px;" required>
+                            <option value="" disabled selected>Choisir le mode</option>
+                            <option value="MJ">Multijoueur (MJ)</option>
+                            <option value="BR">Battle Royale (BR)</option>
+                        </select>
+                        <div id="mj-team-group" style="display: none;">
+                            <label><input type="radio" name="mj-team" value="win" checked> Gagnante</label>
+                            <label><input type="radio" name="mj-team" value="loss"> Perdante</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="br-settings-group" style="display: none; background: rgba(255,115,0,0.05); padding: 15px; border-radius: 8px; border: 1px dashed var(--flame-orange); margin-bottom: 20px;">
                     <div class="match-form-grid">
-
-                        <!-- Mode du Match -->
                         <div class="form-group">
-                            <label>Mode de Jeu</label>
-                            <select id="match-mode" class="form-control" style="margin-bottom: 10px;" required>
-                                <option value="" disabled selected>Choisir le mode</option>
-                                <option value="MJ">Multijoueur (MJ)</option>
-                                <option value="BR">Battle Royale (BR)</option>
+                            <label>Format de Match (BR)</label>
+                            <select id="br-match-type" class="form-control">
+                                <option value="Solo" selected>Solo (1 joueur / équipe)</option>
+                                <option value="Duo">Duo (2 joueurs / équipe)</option>
+                                <option value="Squad">Squad (Dépasse 2 joueurs, max 4)</option>
                             </select>
-                            
-                            <div id="mj-team-group" style="display: none;">
-                                <label><input type="radio" name="mj-team" value="win" checked> Gagnante</label>
-                                <label><input type="radio" name="mj-team" value="loss"> Perdante</label>
-                            </div>
+                        </div>
+                        <div class="form-group" style="position: relative;">
+                            <label>Nombre d'Équipes (Slots)</label>
+                            <input type="number" id="br-slots" class="form-control" min="1" value="16">
+                            <div id="br-top50-indicator" style="position: absolute; right: 10px; top: 40px; font-size: 0.8rem; display: none;"></div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Configuration BR (Visible only if BR is selected) -->
-                    <div id="br-players-group" style="display: none; background: rgba(255,115,0,0.05); padding: 15px; border-radius: 8px; border: 1px dashed var(--flame-orange); margin-bottom: 20px;">
-                        <div class="match-form-grid">
-                            <div class="form-group">
-                                <label>Format de Match (BR)</label>
-                                <select id="br-match-type" class="form-control">
-                                    <option value="Solo" selected>Solo (1 joueur / équipe)</option>
-                                    <option value="Duo">Duo (2 joueurs / équipe)</option>
-                                    <option value="Squad">Squad (Dépasse 2 joueurs, max 4)</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Nombre de Slots (Équipes)</label>
-                                <input type="number" id="br-slots" class="form-control" min="1" value="16">
-                            </div>
-                        </div>
-                        <div class="form-group" style="margin-top: 15px;">
-                            <label>Nombre Total de Joueurs (BR)</label>
-                            <input type="number" id="br-total-players" class="form-control" min="1" value="64">
-                            <small id="br-validation-msg" style="color: #ff3333; display: none; margin-top: 5px; font-weight: bold;"></small>
-                        </div>
-                    </div>
+                <button type="button" id="btn-start-session" class="btn" style="background: var(--flame-orange); width: 100%;">DÉMARRER LA SESSION</button>
+            </div>
 
+            <!-- ÉTAPE 2: Saisie des Joueurs -->
+            <div id="player-entry-card" class="admin-card" style="max-width: 800px; display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; margin-bottom: 25px; padding-bottom: 10px;">
+                    <h2 style="margin: 0; border: none; padding: 0;">Étape 2 : Ajouter Joueur (<span id="session-mode-label">MJ</span>)</h2>
+                    <button type="button" id="btn-cancel-session" class="btn btn-outline btn-small" style="border-color: #ff3333; color: #ff3333;">Annuler Session</button>
+                </div>
+                
+                <form id="add-player-form">
                     <div class="match-form-grid">
                         <div class="form-group">
                             <label>Joueur (Pseudo)</label>
@@ -259,20 +262,20 @@
                                 <option value="" disabled selected>Chargement des joueurs...</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Spécialité Joueur</label>
-                            <input type="text" id="match-player-spec" class="form-control" readonly
-                                placeholder="Auto-détecté">
+                        <div class="form-group" style="display:flex; align-items:flex-end; padding-bottom:12px;">
+                            <label style="display:flex; align-items:center; gap: 8px; cursor: pointer; color: #aaa;">
+                                <input type="checkbox" id="match-not-played"> N'a pas joué (Surnuméraire)
+                            </label>
                         </div>
                     </div>
 
                     <div class="match-form-grid">
                         <div class="form-group">
-                            <label>Rang global (Top équipe / Pl. indiv MJ)</label>
+                            <label>Rang <span id="label-rang-desc">(Top équipe / Indiv)</span></label>
                             <input type="number" id="match-rank" class="form-control" min="1" required>
                         </div>
                         <div class="form-group" id="br-intra-rank-group" style="display: none;">
-                            <label>Rang intra-équipe (BR seulement)</label>
+                            <label>Rang intra-équipe (BR)</label>
                             <input type="number" id="br-intra-rank" class="form-control" min="1" max="4" value="1">
                         </div>
                         <div class="form-group">
@@ -281,38 +284,55 @@
                         </div>
                     </div>
 
-                    <!-- Bonus -->
                     <div class="form-group">
-                        <label>Bonus Spécial</label>
+                        <label>Bonus & Malus Spéciaux</label>
                         <div class="checkbox-group">
-                            <label><input type="checkbox" id="match-mvp"> MVP (+5 pts)</label>
+                            <label><input type="checkbox" id="match-mvp"> MVP</label>
+                            <label id="mj-malus-group" style="display:none;"><input type="checkbox" id="match-malus-5e"> 5e deux fois d'affilée (-2 pts)</label>
                         </div>
-                        <input type="number" id="match-admin-bonus" class="form-control"
-                            placeholder="Bonus admin manuel (ex: 10)" style="margin-top: 10px;">
+                        <input type="number" id="match-admin-bonus" class="form-control" placeholder="Bonus admin manuel (ex: 10)" style="margin-top: 10px;">
                     </div>
 
-
-                    <div style="display: flex; gap: 15px; margin-top: 30px;">
-                        <button type="button" id="btn-calculate" class="btn btn-outline"
-                            style="flex: 1;">SIMULER CALCUL DES POINTS</button>
-
-                        <button type="submit" class="btn"
-                            style="flex: 1; background: #33aaff; box-shadow: 0 0 15px rgba(51,170,255,0.4);">VALIDER
-                            ET AJOUTER</button>
+                    <!-- Calcul en direct détaillé -->
+                    <div id="calc-preview" style="background: rgba(0,0,0,0.4); border: 1px dashed #555; padding: 15px; border-radius: 5px; margin-top: 20px; color: #ddd; font-family: monospace; line-height: 1.6;">
+                        <span style="color:#aaa;">Sélectionnez un joueur et remplissez les infos pour voir le calcul...</span>
                     </div>
 
-                    <div id="simulation-result" class="mock-result">
-                        Points du match : <strong id="calc-points-val">0</strong> points.<br>
-                        <span style="font-size: 0.9rem; color:#aaa;" id="calc-details"></span>
-                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #444; color: var(--flame-yellow);">
-                            <strong>Nouveau Total : <span id="calc-new-total">0</span> pts</strong> • 
-                            Nouveau Grade : <span id="calc-new-grade">Sélectionnez un joueur</span>
-                        </div>
-                        <div id="sim-profile-link-container" style="margin-top: 10px; display: none;">
-                            <a id="sim-profile-link" href="#" target="_blank" class="btn btn-outline btn-small" style="font-size: 0.8rem; padding: 4px 10px; text-decoration: none;">Voir son Profil</a>
-                        </div>
-                    </div>
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 20px; background: #33aaff; box-shadow: 0 0 15px rgba(51,170,255,0.4);">AJOUTER AU MATCH</button>
                 </form>
+            </div>
+
+            <!-- ÉTAPE 3: Liste des Joueurs et Validation -->
+            <div id="session-summary-card" class="admin-card" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; margin-bottom: 20px; padding-bottom: 10px;">
+                    <h2 style="margin: 0; border: none; padding: 0;">Historique du Match</h2>
+                    <button type="button" id="btn-auto-mvp" class="btn btn-outline" style="border-color: var(--flame-yellow); color: var(--flame-yellow); font-size: 0.8rem; padding: 5px 15px;">⭐ AUTO MVP</button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="mini-table" style="width: 100%; text-align: center; margin-bottom: 20px;" id="session-players-table">
+                        <thead>
+                            <tr>
+                                <th>Joueur</th>
+                                <th>Rang</th>
+                                <th>Kills</th>
+                                <th>Base</th>
+                                <th>Malus</th>
+                                <th>MVP</th>
+                                <th>Admin</th>
+                                <th>Total</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- JS will inject rows here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="session-errors" style="color: #ff3333; margin-bottom: 15px; font-weight: bold; display: none;"></div>
+
+                <button type="button" id="btn-submit-session" class="btn" style="width: 100%; background: #33ff33; color: #000; font-weight: bold; box-shadow: 0 0 15px rgba(51,255,51,0.4);">VALIDER LE MATCH COMPLET</button>
             </div>
         </main>
     </div>
