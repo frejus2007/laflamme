@@ -111,18 +111,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return null;
                 }
                 if (teamResult === 'win') {
-                    if (rank === 1) basePoints = 12;
-                    else if (rank === 2) basePoints = 9;
-                    else if (rank === 3) basePoints = 6;
-                    else if (rank === 4) basePoints = 3;
-                    else if (rank >= 5) basePoints = 2;
+                    if (rank === 1) basePoints = 15;
+                    else if (rank === 2) basePoints = 12;
+                    else if (rank === 3) basePoints = 9;
+                    else if (rank === 4) basePoints = 6;
+                    else if (rank >= 5) basePoints = 4;
                     explanation += `${basePoints} pts (Victoire). `;
                 } else {
-                    if (rank === 1) basePoints = 7;
-                    else if (rank === 2) basePoints = 5;
-                    else if (rank === 3) basePoints = 2;
-                    else if (rank === 4) basePoints = -2;
-                    else if (rank >= 5) basePoints = -5;
+                    if (rank === 1) basePoints = 10;
+                    else if (rank === 2) basePoints = 8;
+                    else if (rank === 3) basePoints = 6;
+                    else if (rank === 4) basePoints = 4;
+                    else if (rank >= 5) basePoints = 2;
                     explanation += `${basePoints} pts (Défaite). `;
                 }
             } else if (mode === 'BR') {

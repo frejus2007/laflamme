@@ -142,124 +142,143 @@
 
         <!-- Mode MJ -->
         <div class="rules-section">
-            <h2>🎮 Mode Multijoueur (MJ)</h2>
-            <p>Le gain de points dépend de la victoire ou de la défaite de l'équipe, ainsi que de votre classement
-                individuel en fin de partie.</p>
+            <h2>🎮 MODE MJ (Multijoueur)</h2>
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Principe général :</h3>
+            <p>Les points sont attribués selon :</p>
+            <ul>
+                <li>le rang individuel dans la partie (1 à 5)</li>
+                <li>et le résultat de l'équipe (victoire ou défaite)</li>
+            </ul>
 
-            <div class="points-grid">
-                <div>
-                    <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1rem;">Équipe Gagnante</h3>
-                    <table class="mini-table">
-                        <tr>
-                            <th>Rang</th>
-                            <th>Points</th>
-                        </tr>
-                        <tr>
-                            <td>1er</td>
-                            <td class="bonus">+12</td>
-                        </tr>
-                        <tr>
-                            <td>2ème</td>
-                            <td class="bonus">+9</td>
-                        </tr>
-                        <tr>
-                            <td>3ème</td>
-                            <td class="bonus">+6</td>
-                        </tr>
-                        <tr>
-                            <td>4ème</td>
-                            <td class="bonus">+3</td>
-                        </tr>
-                        <tr>
-                            <td>5ème</td>
-                            <td class="bonus">+2</td>
-                        </tr>
-                        <tr>
-                            <td>6 et +</td>
-                            <td>0</td>
-                        </tr>
-                    </table>
-                </div>
-                <div>
-                    <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1rem;">Équipe Perdante</h3>
-                    <table class="mini-table">
-                        <tr>
-                            <th>Rang</th>
-                            <th>Points</th>
-                        </tr>
-                        <tr>
-                            <td>1er</td>
-                            <td class="bonus">+7</td>
-                        </tr>
-                        <tr>
-                            <td>2ème</td>
-                            <td class="bonus">+5</td>
-                        </tr>
-                        <tr>
-                            <td>3ème</td>
-                            <td class="bonus">+2</td>
-                        </tr>
-                        <tr>
-                            <td>4ème</td>
-                            <td class="malus">-2</td>
-                        </tr>
-                        <tr>
-                            <td>5ème</td>
-                            <td class="malus">-5</td>
-                        </tr>
-                    </table>
-                    <p style="font-size: 0.8rem; margin-top: 5px; color: #888;">* Les deux derniers joueurs de l'équipe
-                        perdante reçoivent un malus.</p>
-                </div>
-            </div>
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Barème des points :</h3>
+            <table class="mini-table" style="margin-bottom: 20px;">
+                <tr>
+                    <th>Rang</th>
+                    <th>Équipe gagnante</th>
+                    <th>Équipe perdante</th>
+                </tr>
+                <tr>
+                    <td>1er</td>
+                    <td class="bonus">+15</td>
+                    <td class="bonus">+10</td>
+                </tr>
+                <tr>
+                    <td>2e</td>
+                    <td class="bonus">+12</td>
+                    <td class="bonus">+8</td>
+                </tr>
+                <tr>
+                    <td>3e</td>
+                    <td class="bonus">+9</td>
+                    <td class="bonus">+6</td>
+                </tr>
+                <tr>
+                    <td>4e</td>
+                    <td class="bonus">+6</td>
+                    <td class="bonus">+4</td>
+                </tr>
+                <tr>
+                    <td>5e</td>
+                    <td class="bonus">+4</td>
+                    <td class="bonus">+2</td>
+                </tr>
+            </table>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Règles importantes :</h3>
+            <ul>
+                <li>L'équipe gagnante gagne plus que l'équipe perdante</li>
+                <li>Le classement individuel reste déterminant</li>
+            </ul>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🏆 Bonus :</h3>
+            <ul>
+                <li><strong>MVP :</strong> <span class="bonus">+5 points</span></li>
+                <li><strong>Bonus admin :</strong> <span class="bonus">+3 à +10 points</span></li>
+            </ul>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">⚠️ Formation des équipes :</h3>
+            <ul>
+                <li>Les équipes sont formées aléatoirement</li>
+                <li>Si une équipe dépasse 5 joueurs :
+                    <ul style="margin-top: 5px;">
+                        <li>Certains joueurs ne jouent pas une manche</li>
+                        <li>Ces joueurs reçoivent automatiquement les points du 4e de leur équipe</li>
+                    </ul>
+                </li>
+            </ul>
         </div>
 
         <!-- Mode BR -->
         <div class="rules-section">
-            <h2>🪂 Mode Battle Royale (BR)</h2>
-            <p>En Battle Royale, les points de base dépendent du classement final de l'équipe comparé au <strong>nombre total d'équipes (slots)</strong>.</p>
-            <div class="formula-box" style="font-size: 0.9rem;">
-                Points de Base = Arrondi( (Nombre_Equipes − Rang_Equipe + 1) / Nombre_Equipes × 20 )
-            </div>
-            
-            <h3 style="color: var(--text-color); margin-top: 20px; font-size: 1.1rem;">Points Intra-Équipe</h3>
-            <p>Un bonus ou malus est ajouté en fonction de votre classement au sein de votre escouade :</p>
-            <div class="points-grid">
-                <div>
-                    <h4 style="color: var(--flame-orange); margin-bottom: 5px; font-size: 0.9rem;">Format Duo</h4>
-                    <table class="mini-table">
-                        <tr><th>Rang Interne</th><th>Points</th></tr>
-                        <tr><td>1er</td><td class="bonus">+3</td></tr>
-                        <tr><td>2ème</td><td class="malus">-1</td></tr>
-                    </table>
-                </div>
-                <div>
-                    <h4 style="color: var(--flame-orange); margin-bottom: 5px; font-size: 0.9rem;">Format Squad</h4>
-                    <table class="mini-table">
-                        <tr><th>Rang Interne</th><th>Points</th></tr>
-                        <tr><td>1er</td><td class="bonus">+5</td></tr>
-                        <tr><td>2ème</td><td class="bonus">+2</td></tr>
-                        <tr><td>3ème</td><td>0</td></tr>
-                        <tr><td>4ème</td><td class="malus">-4</td></tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bonus et Malus spéciales -->
-        <div class="rules-section">
-            <h2>⭐ Bonus & Malus Spéciaux</h2>
+            <h2>🪂 MODE BR (Battle Royale)</h2>
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Principe général :</h3>
+            <p>Les points sont calculés selon :</p>
             <ul>
-                <li><strong>MVP (Most Valuable Player) :</strong> 
+                <li>le classement final de l'équipe</li>
+                <li>le classement du joueur dans son équipe</li>
+            </ul>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Calcul des points :</h3>
+            <ul>
+                <li><strong>Points équipe =</strong><br>
+                    <div class="formula-box" style="font-size: 0.9rem; display: inline-block; margin-top: 10px;">
+                        arrondi( (Nombre de teams - Rang équipe + 1) / Nombre de teams × 20 )
+                    </div>
+                </li>
+            </ul>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">Bonus intra-équipe :</h3>
+            <ul>
+                <li><strong>Solo :</strong> aucun</li>
+                <li><strong>Duo :</strong>
                     <ul style="margin-top: 5px;">
-                        <li><span style="color:#ddd;">Mode MJ :</span> <span class="bonus">+5 points</span></li>
-                        <li><span style="color:#ddd;">BR Duo (1er de l'équipe) :</span> <span class="bonus">+5 points</span></li>
-                        <li><span style="color:#ddd;">BR Squad (1er de l'équipe) :</span> <span class="bonus">+6 points</span></li>
+                        <li>1er → <span class="bonus">+3</span></li>
+                        <li>2e → <span class="malus">-1</span></li>
                     </ul>
                 </li>
-                <br>
-                <li><strong>Bonus Admin :</strong> Variables. Les admins peuvent ajouter manuellement des points exceptionnels (ex: +2, +5, +10) via le formulaire.</li>
-                <li><strong>Changement de Spécialité (MJ ↔ BR) :</strong> Pénalité stricte de <span class="malus">-20 points</span>. Maximum autorisé : 1 fois par saison.</li>
+                <li><strong>Squad :</strong>
+                    <ul style="margin-top: 5px;">
+                        <li>1er → <span class="bonus">+5</span></li>
+                        <li>2e → <span class="bonus">+2</span></li>
+                        <li>3e → 0</li>
+                        <li>4e → <span class="malus">-4</span></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">🏆 Bonus :</h3>
+            <ul>
+                <li><strong>MVP :</strong>
+                    <ul style="margin-top: 5px;">
+                        <li>Solo → 0</li>
+                        <li>Duo → <span class="bonus">+5</span></li>
+                        <li>Squad → <span class="bonus">+6</span></li>
+                    </ul>
+                </li>
+                <li><strong>Bonus admin :</strong> <span class="bonus">+3 à +10 points</span></li>
+            </ul>
+
+            <hr style="border-color: #333; margin: 20px 0;">
+
+            <h3 style="color: var(--text-color); margin-bottom: 10px; font-size: 1.1rem;">À savoir :</h3>
+            <ul>
+                <li>Les kills sont affichés mais ne comptent pas dans les points</li>
+                <li>Le classement d'équipe est le facteur principal</li>
+                <li>Le rang dans l'équipe permet de différencier les joueurs</li>
             </ul>
         </div>
 
